@@ -33,7 +33,7 @@ Or install it yourself as:
         end
     end
     
-    Dry::Swagger::ContractParser.new.call(Contract)
+    Dry::Swagger::ContractParser.new.call(Contract).to_swagger
     => {
          "type": "object",
          "properties": {
@@ -81,7 +81,7 @@ Or install it yourself as:
       end
     end
     
-    Dry::Swagger::ContractParser.new.call(Contract)
+    Dry::Swagger::ContractParser.new.call(Contract).to_swagger
     => {
          "type": "object",
          "properties": {
@@ -135,7 +135,7 @@ Or install it yourself as:
       attribute? :optional_nullable_string, Types::String.optional
     end
     
-    Dry::Swagger::StructParser.new.call(DTO)
+    Dry::Swagger::StructParser.new.call(DTO).to_swagger
     => {
          "type": "object",
          "properties": {
@@ -170,7 +170,22 @@ Or install it yourself as:
          ]
        }
 #### With nested fields
-    {
+    class NestedDTO < Dry::Struct
+      attribute  :required_string, Types::String
+      attribute  :required_nullable_string, Types::String.optional
+      attribute  :required_string_with_enum, Types::String.enum('enum1')
+      attribute? :optional_string, Types::String
+      attribute? :optional_nullable_string, Types::String.optional
+    end
+    
+    class DTO < Dry::Struct
+      attribute  :array_of_integer, Types::Array.of(Types::Integer)
+      attribute  :array_of_objects, Types::Array.of(NestedDTO)
+      attribute  :dto, NestedDTO
+    end
+    
+    Dry::Swagger::StructParser.new.call(DTO).to_swagger
+    => {
       "type": "object",
       "properties": {
         "array_of_integer": {
