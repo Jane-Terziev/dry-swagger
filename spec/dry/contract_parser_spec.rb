@@ -571,6 +571,7 @@ bool?
           end
 
           required(:with_description).value(:str?, min_size?: 5, max_size?: 10)
+          required(:string_with_enum).value(Dry::Swagger::Types::String.enum("test", "test1"))
         end
       end
     end
@@ -619,8 +620,8 @@ bool?
                   :integer=>{:type=>:integer, :"x-nullable"=>true}
               }, :required=>[:string]
               },
-              :array=>{:type=>:array, :items=>{:type=>:integer}},
-              :array1=>{:type=>:array, :items=>{:type=>:string}},
+              :array=>{:type=>:array, :items=>{:type=>:integer, :"x-nullable"=>false}},
+              :array1=>{:type=>:array, :items=>{:type=>:string, :"x-nullable"=>false}},
               :array2=>{:type=>:array, :items=>{:type=>:object, :properties=>{
                   :string=>{:type=>:string, :"x-nullable"=>false},
                   :integer=>{:type=>:integer, :"x-nullable"=>true}
@@ -631,14 +632,15 @@ bool?
                   :integer=>{:type=>:integer, :"x-nullable"=>true}
               }, :required=>[:string]}
               },
-              :with_description=>{:type=>:string, :"x-nullable"=>false, :description=>"Minimum size: 5, Maximum size: 10"}
+              :with_description=>{:type=>:string, :"x-nullable"=>false, :description=>"Minimum size: 5, Maximum size: 10"},
+              :string_with_enum=>{:enum=>["test", "test1"], :"x-nullable"=>false, :type=>:string}
           }, :required=>[
               :string, :string1, :string2,
               :integer, :integer1, :integer2,
               :boolean, :boolean1, :boolean2,
               :date, :date1, :date2,
               :datetime, :datetime1, :datetime2,
-              :hash, :array, :array2, :with_description
+              :hash, :array, :array2, :with_description, :string_with_enum
           ]
           }
         end
@@ -650,7 +652,7 @@ bool?
         end
 
         it 'should generate a valid swagger documentation' do
-          expect(subject.call(test_contract)).to match(expected_result)
+          expect(subject.call(test_contract).to_swagger).to match(expected_result)
         end
       end
 
@@ -697,8 +699,8 @@ bool?
                   :integer=>{:type=>:integer, :nullable=>true}
               }, :required=>[:string]
               },
-              :array=>{:type=>:array, :items=>{:type=>:integer}},
-              :array1=>{:type=>:array, :items=>{:type=>:string}},
+              :array=>{:type=>:array, :items=>{:type=>:integer, :nullable=>false}},
+              :array1=>{:type=>:array, :items=>{:type=>:string, :nullable=>false}},
               :array2=>{:type=>:array, :items=>{:type=>:object, :properties=>{
                   :string=>{:type=>:string, :nullable=>false},
                   :integer=>{:type=>:integer, :nullable=>true}
@@ -709,14 +711,15 @@ bool?
                   :integer=>{:type=>:integer, :nullable=>true}
               }, :required=>[:string]}
               },
-              :with_description=>{:type=>:string, :nullable=>false, :description=>"Minimum size: 5, Maximum size: 10"}
+              :with_description=>{:type=>:string, :nullable=>false, :description=>"Minimum size: 5, Maximum size: 10"},
+              :string_with_enum=>{:enum=>["test", "test1"], :nullable=>false, :type=>:string}
           }, :required=>[
               :string, :string1, :string2,
               :integer, :integer1, :integer2,
               :boolean, :boolean1, :boolean2,
               :date, :date1, :date2,
               :datetime, :datetime1, :datetime2,
-              :hash, :array, :array2, :with_description
+              :hash, :array, :array2, :with_description, :string_with_enum
           ]
           }
         end
@@ -728,7 +731,7 @@ bool?
         end
 
         it 'should generate a valid swagger documentation' do
-          expect(subject.call(test_contract)).to match(expected_result)
+          expect(subject.call(test_contract).to_swagger).to match(expected_result)
         end
       end
     end

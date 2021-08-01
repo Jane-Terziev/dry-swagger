@@ -1,6 +1,7 @@
 require "dry/swagger/version"
 require "dry/swagger/contract_parser"
 require "dry/swagger/struct_parser"
+require 'dry/swagger/documentation_generator'
 require 'helpers/configuration'
 
 module Dry

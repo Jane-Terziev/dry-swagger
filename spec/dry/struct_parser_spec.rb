@@ -262,14 +262,14 @@ Dry::Swagger::Types::JSON::Decimal
           end
 
           attribute :required_array_of_values, Dry::Swagger::Types::Array.of(Dry::Swagger::Types::Integer)
-          attribute :required_array_of_values_or_nil, Dry::Swagger::Types::Array.of(Dry::Swagger::Types::Integer).optional
+          attribute :required_array_of_values_or_nil, Dry::Swagger::Types::Array.of(Dry::Swagger::Types::Integer.optional)
           attribute? :optional_array_of_values, Dry::Swagger::Types::Array.of(Dry::Swagger::Types::Integer)
-          attribute? :optional_array_of_values_or_nil, Dry::Swagger::Types::Array.of(Dry::Swagger::Types::Integer).optional
+          attribute? :optional_array_of_values_or_nil, Dry::Swagger::Types::Array.of(Dry::Swagger::Types::Integer.optional)
 
           attribute :required_array_of_nested_dto, Dry::Swagger::Types::Array.of(nested_dto)
-          attribute :required_array_of_nested_dto_or_nil, Dry::Swagger::Types::Array.of(nested_dto).optional
+          attribute :required_array_of_nested_dto_or_nil, Dry::Swagger::Types::Array.of(nested_dto.optional)
           attribute? :optional_array_of_nested_dto, Dry::Swagger::Types::Array.of(nested_dto)
-          attribute? :optional_array_of_nested_dto_or_nil, Dry::Swagger::Types::Array.of(nested_dto).optional
+          attribute? :optional_array_of_nested_dto_or_nil, Dry::Swagger::Types::Array.of(nested_dto.optional)
 
           attribute :required_nested_dto, nested_dto
           attribute :required_nested_dto_or_nil, nested_dto.optional
@@ -280,24 +280,19 @@ Dry::Swagger::Types::JSON::Decimal
 
       context 'when configuration nullable type is set to x-nullable' do
         let(:expected_result) do
-          {
-              :type=>:object, :properties=>{
+          {:type=>:object, :properties=>{
               :required_string=>{:type=>:string, :"x-nullable"=>false},
               :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
               :optional_string=>{:type=>:string, :"x-nullable"=>false},
               :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
-              :required_string_with_enum=>{:type=>:string, :enum=>["test1", "test2"], :"x-nullable"=>false},
-              :required_string_or_nil_with_enum=>{:type=>:string, :enum=>["test1", "test2", nil], :"x-nullable"=>true},
-              :optional_string_with_enum=>{:type=>:string, :enum=>["test1", "test2"], :"x-nullable"=>false},
-              :optional_string_or_nil_with_enum=>{:type=>:string, :enum=>["test1", "test2", nil], :"x-nullable"=>true},
+              :required_string_with_enum=>{:type=>:string, :"x-nullable"=>false, :enum=>["test1", "test2"]},
+              :required_string_or_nil_with_enum=>{:type=>:string, :"x-nullable"=>true, :enum=>["test1", "test2", nil]},
+              :optional_string_with_enum=>{:type=>:string, :"x-nullable"=>false, :enum=>["test1", "test2"]},
+              :optional_string_or_nil_with_enum=>{:type=>:string, :"x-nullable"=>true, :enum=>["test1", "test2", nil]},
               :required_integer=>{:type=>:integer, :"x-nullable"=>false},
               :required_integer_or_nil=>{:type=>:integer, :"x-nullable"=>true},
               :optional_integer=>{:type=>:integer, :"x-nullable"=>false},
               :optional_integer_or_nil=>{:type=>:integer, :"x-nullable"=>true},
-              :required_boolean=>{:type=>:boolean, :"x-nullable"=>false},
-              :required_boolean_or_nil=>{:type=>:boolean, :"x-nullable"=>true},
-              :optional_boolean=>{:type=>:boolean, :"x-nullable"=>false},
-              :optional_boolean_or_nil=>{:type=>:boolean, :"x-nullable"=>true},
               :required_date=>{:type=>:string, :format=>:date, :"x-nullable"=>false},
               :required_date_or_nil=>{:type=>:string, :format=>:date, :"x-nullable"=>true},
               :optional_date=>{:type=>:string, :format=>:date, :"x-nullable"=>false},
@@ -315,65 +310,78 @@ Dry::Swagger::Types::JSON::Decimal
                   :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
                   :optional_string=>{:type=>:string, :"x-nullable"=>false},
                   :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
-              }, :required=>[:required_string, :required_string_or_nil], :"x-nullable"=>false},
-              :required_array_of_values=>{:type=>:array, :items=>{:type=>:integer}, :"x-nullable"=>false},
-              :required_array_of_values_or_nil=>{:type=>:array, :items=>{:type=>:integer}, :"x-nullable"=>true},
-              :optional_array_of_values=>{:type=>:array, :items=>{:type=>:integer}, :"x-nullable"=>false},
-              :optional_array_of_values_or_nil=>{:type=>:array, :items=>{:type=>:integer}, :"x-nullable"=>true},
-              :required_array_of_nested_dto=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :required_string=>{:type=>:string, :"x-nullable"=>false},
-                  :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
-                  :optional_string=>{:type=>:string, :"x-nullable"=>false},
-                  :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
-              }, :required=>[:required_string, :required_string_or_nil]}, :"x-nullable"=>false},
-              :required_array_of_nested_dto_or_nil=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :required_string=>{:type=>:string, :"x-nullable"=>false},
-                  :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
-                  :optional_string=>{:type=>:string, :"x-nullable"=>false},
-                  :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
-              }, :required=>[:required_string, :required_string_or_nil]}, :"x-nullable"=>true},
-              :optional_array_of_nested_dto=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :required_string=>{:type=>:string, :"x-nullable"=>false},
-                  :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
-                  :optional_string=>{:type=>:string, :"x-nullable"=>false},
-                  :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
-              }, :required=>[:required_string, :required_string_or_nil]}, :"x-nullable"=>false},
-              :optional_array_of_nested_dto_or_nil=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :required_string=>{:type=>:string, :"x-nullable"=>false},
-                  :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
-                  :optional_string=>{:type=>:string, :"x-nullable"=>false},
-                  :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
-              }, :required=>[:required_string, :required_string_or_nil]}, :"x-nullable"=>true},
+              }, :required=>[:required_string, :required_string_or_nil]},
+              :required_array_of_values=>{:type=>:array, :items=>{:type=>:integer, :"x-nullable"=>false}},
+              :required_array_of_values_or_nil=>{:type=>:array, :items=>{:type=>:integer, :"x-nullable"=>true}},
+              :optional_array_of_values=>{:type=>:array, :items=>{:type=>:integer, :"x-nullable"=>false}},
+              :optional_array_of_values_or_nil=>{:type=>:array, :items=>{:type=>:integer, :"x-nullable"=>true}},
+              :required_array_of_nested_dto=>{:type=>:array, :items=>{
+                  :type=>:object, :properties=>{
+                      :required_string=>{:type=>:string, :"x-nullable"=>false},
+                      :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
+                      :optional_string=>{:type=>:string, :"x-nullable"=>false},
+                      :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
+                  }, :required=>[:required_string, :required_string_or_nil]}
+              },
+              :required_array_of_nested_dto_or_nil=>{:type=>:array, :items=>{
+                  :type=>:object, :properties=>{
+                      :required_string=>{:type=>:string, :"x-nullable"=>false},
+                      :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
+                      :optional_string=>{:type=>:string, :"x-nullable"=>false},
+                      :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
+                  }, :required=>[:required_string, :required_string_or_nil]}
+              },
+              :optional_array_of_nested_dto=>{:type=>:array, :items=>{
+                  :type=>:object, :properties=>{
+                      :required_string=>{:type=>:string, :"x-nullable"=>false},
+                      :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
+                      :optional_string=>{:type=>:string, :"x-nullable"=>false},
+                      :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
+                  }, :required=>[:required_string, :required_string_or_nil]}
+              },
+              :optional_array_of_nested_dto_or_nil=>{:type=>:array, :items=>{
+                  :type=>:object, :properties=>{
+                      :required_string=>{:type=>:string, :"x-nullable"=>false},
+                      :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
+                      :optional_string=>{:type=>:string, :"x-nullable"=>false},
+                      :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
+                  }, :required=>[:required_string, :required_string_or_nil]}
+              },
               :required_nested_dto=>{:type=>:object, :properties=>{
                   :required_string=>{:type=>:string, :"x-nullable"=>false},
                   :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
                   :optional_string=>{:type=>:string, :"x-nullable"=>false},
                   :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
-              }, :required=>[:required_string, :required_string_or_nil], :"x-nullable"=>false},
+              }, :required=>[:required_string, :required_string_or_nil]},
               :required_nested_dto_or_nil=>{:type=>:object, :properties=>{
                   :required_string=>{:type=>:string, :"x-nullable"=>false},
                   :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
                   :optional_string=>{:type=>:string, :"x-nullable"=>false},
                   :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
-              }, :required=>[:required_string, :required_string_or_nil], :"x-nullable"=>true},
+              }, :required=>[:required_string, :required_string_or_nil]},
               :optional_nested_dto=>{:type=>:object, :properties=>{
                   :required_string=>{:type=>:string, :"x-nullable"=>false},
                   :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
                   :optional_string=>{:type=>:string, :"x-nullable"=>false},
                   :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
-              }, :required=>[:required_string, :required_string_or_nil], :"x-nullable"=>false},
+              }, :required=>[:required_string, :required_string_or_nil]},
               :optional_nested_dto_or_nil=>{:type=>:object, :properties=>{
                   :required_string=>{:type=>:string, :"x-nullable"=>false},
                   :required_string_or_nil=>{:type=>:string, :"x-nullable"=>true},
                   :optional_string=>{:type=>:string, :"x-nullable"=>false},
                   :optional_string_or_nil=>{:type=>:string, :"x-nullable"=>true}
-              }, :required=>[:required_string, :required_string_or_nil], :"x-nullable"=>true}
-          }, :required=>[:required_string, :required_string_or_nil, :required_string_with_enum,
-                         :required_string_or_nil_with_enum, :required_integer, :required_integer_or_nil,
-                         :required_boolean, :required_boolean_or_nil, :required_date, :required_date_or_nil,
-                         :required_date_time, :required_date_time_or_nil, :required_time, :required_time_or_nil,
-                         :hash, :required_array_of_values, :required_array_of_values_or_nil, :required_array_of_nested_dto,
-                         :required_array_of_nested_dto_or_nil, :required_nested_dto, :required_nested_dto_or_nil]
+              }, :required=>[:required_string, :required_string_or_nil]}
+          }, :required=>[
+              :required_string, :required_string_or_nil, :required_string_with_enum, :required_string_or_nil_with_enum,
+              :required_integer, :required_integer_or_nil,
+              :required_date, :required_date_or_nil,
+              :required_date_time, :required_date_time_or_nil,
+              :required_time, :required_time_or_nil,
+              :hash,
+              :required_array_of_values, :required_array_of_values_or_nil,
+              :required_array_of_nested_dto, :required_array_of_nested_dto_or_nil,
+              :required_nested_dto, :required_nested_dto_or_nil
+            ]
           }
         end
 
@@ -384,30 +392,25 @@ Dry::Swagger::Types::JSON::Decimal
         end
 
         it 'should generate a valid swagger documentation' do
-          expect(described_class.new.call(dto)).to match(expected_result)
+          expect(described_class.new.call(dto).to_swagger).to match(expected_result)
         end
       end
 
       context 'when configuration nullable type is set to nullable' do
         let(:expected_result) do
-          {
-              :type=>:object, :properties=>{
+          {:type=>:object, :properties=>{
               :required_string=>{:type=>:string, :nullable=>false},
               :required_string_or_nil=>{:type=>:string, :nullable=>true},
               :optional_string=>{:type=>:string, :nullable=>false},
               :optional_string_or_nil=>{:type=>:string, :nullable=>true},
-              :required_string_with_enum=>{:type=>:string, :enum=>["test1", "test2"], :nullable=>false},
-              :required_string_or_nil_with_enum=>{:type=>:string, :enum=>["test1", "test2", nil], :nullable=>true},
-              :optional_string_with_enum=>{:type=>:string, :enum=>["test1", "test2"], :nullable=>false},
-              :optional_string_or_nil_with_enum=>{:type=>:string, :enum=>["test1", "test2", nil], :nullable=>true},
+              :required_string_with_enum=>{:type=>:string, :nullable=>false, :enum=>["test1", "test2"]},
+              :required_string_or_nil_with_enum=>{:type=>:string, :nullable=>true, :enum=>["test1", "test2", nil]},
+              :optional_string_with_enum=>{:type=>:string, :nullable=>false, :enum=>["test1", "test2"]},
+              :optional_string_or_nil_with_enum=>{:type=>:string, :nullable=>true, :enum=>["test1", "test2", nil]},
               :required_integer=>{:type=>:integer, :nullable=>false},
               :required_integer_or_nil=>{:type=>:integer, :nullable=>true},
               :optional_integer=>{:type=>:integer, :nullable=>false},
               :optional_integer_or_nil=>{:type=>:integer, :nullable=>true},
-              :required_boolean=>{:type=>:boolean, :nullable=>false},
-              :required_boolean_or_nil=>{:type=>:boolean, :nullable=>true},
-              :optional_boolean=>{:type=>:boolean, :nullable=>false},
-              :optional_boolean_or_nil=>{:type=>:boolean, :nullable=>true},
               :required_date=>{:type=>:string, :format=>:date, :nullable=>false},
               :required_date_or_nil=>{:type=>:string, :format=>:date, :nullable=>true},
               :optional_date=>{:type=>:string, :format=>:date, :nullable=>false},
@@ -425,65 +428,78 @@ Dry::Swagger::Types::JSON::Decimal
                   :required_string_or_nil=>{:type=>:string, :nullable=>true},
                   :optional_string=>{:type=>:string, :nullable=>false},
                   :optional_string_or_nil=>{:type=>:string, :nullable=>true}
-              }, :required=>[:required_string, :required_string_or_nil], :nullable=>false},
-              :required_array_of_values=>{:type=>:array, :items=>{:type=>:integer}, :nullable=>false},
-              :required_array_of_values_or_nil=>{:type=>:array, :items=>{:type=>:integer}, :nullable=>true},
-              :optional_array_of_values=>{:type=>:array, :items=>{:type=>:integer}, :nullable=>false},
-              :optional_array_of_values_or_nil=>{:type=>:array, :items=>{:type=>:integer}, :nullable=>true},
-              :required_array_of_nested_dto=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :required_string=>{:type=>:string, :nullable=>false},
-                  :required_string_or_nil=>{:type=>:string, :nullable=>true},
-                  :optional_string=>{:type=>:string, :nullable=>false},
-                  :optional_string_or_nil=>{:type=>:string, :nullable=>true}
-              }, :required=>[:required_string, :required_string_or_nil]}, :nullable=>false},
-              :required_array_of_nested_dto_or_nil=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :required_string=>{:type=>:string, :nullable=>false},
-                  :required_string_or_nil=>{:type=>:string, :nullable=>true},
-                  :optional_string=>{:type=>:string, :nullable=>false},
-                  :optional_string_or_nil=>{:type=>:string, :nullable=>true}
-              }, :required=>[:required_string, :required_string_or_nil]}, :nullable=>true},
-              :optional_array_of_nested_dto=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :required_string=>{:type=>:string, :nullable=>false},
-                  :required_string_or_nil=>{:type=>:string, :nullable=>true},
-                  :optional_string=>{:type=>:string, :nullable=>false},
-                  :optional_string_or_nil=>{:type=>:string, :nullable=>true}
-              }, :required=>[:required_string, :required_string_or_nil]}, :nullable=>false},
-              :optional_array_of_nested_dto_or_nil=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :required_string=>{:type=>:string, :nullable=>false},
-                  :required_string_or_nil=>{:type=>:string, :nullable=>true},
-                  :optional_string=>{:type=>:string, :nullable=>false},
-                  :optional_string_or_nil=>{:type=>:string, :nullable=>true}
-              }, :required=>[:required_string, :required_string_or_nil]}, :nullable=>true},
+              }, :required=>[:required_string, :required_string_or_nil]},
+              :required_array_of_values=>{:type=>:array, :items=>{:type=>:integer, :nullable=>false}},
+              :required_array_of_values_or_nil=>{:type=>:array, :items=>{:type=>:integer, :nullable=>true}},
+              :optional_array_of_values=>{:type=>:array, :items=>{:type=>:integer, :nullable=>false}},
+              :optional_array_of_values_or_nil=>{:type=>:array, :items=>{:type=>:integer, :nullable=>true}},
+              :required_array_of_nested_dto=>{:type=>:array, :items=>{
+                  :type=>:object, :properties=>{
+                      :required_string=>{:type=>:string, :nullable=>false},
+                      :required_string_or_nil=>{:type=>:string, :nullable=>true},
+                      :optional_string=>{:type=>:string, :nullable=>false},
+                      :optional_string_or_nil=>{:type=>:string, :nullable=>true}
+                  }, :required=>[:required_string, :required_string_or_nil]}
+              },
+              :required_array_of_nested_dto_or_nil=>{:type=>:array, :items=>{
+                  :type=>:object, :properties=>{
+                      :required_string=>{:type=>:string, :nullable=>false},
+                      :required_string_or_nil=>{:type=>:string, :nullable=>true},
+                      :optional_string=>{:type=>:string, :nullable=>false},
+                      :optional_string_or_nil=>{:type=>:string, :nullable=>true}
+                  }, :required=>[:required_string, :required_string_or_nil]}
+              },
+              :optional_array_of_nested_dto=>{:type=>:array, :items=>{
+                  :type=>:object, :properties=>{
+                      :required_string=>{:type=>:string, :nullable=>false},
+                      :required_string_or_nil=>{:type=>:string, :nullable=>true},
+                      :optional_string=>{:type=>:string, :nullable=>false},
+                      :optional_string_or_nil=>{:type=>:string, :nullable=>true}
+                  }, :required=>[:required_string, :required_string_or_nil]}
+              },
+              :optional_array_of_nested_dto_or_nil=>{:type=>:array, :items=>{
+                  :type=>:object, :properties=>{
+                      :required_string=>{:type=>:string, :nullable=>false},
+                      :required_string_or_nil=>{:type=>:string, :nullable=>true},
+                      :optional_string=>{:type=>:string, :nullable=>false},
+                      :optional_string_or_nil=>{:type=>:string, :nullable=>true}
+                  }, :required=>[:required_string, :required_string_or_nil]}
+              },
               :required_nested_dto=>{:type=>:object, :properties=>{
                   :required_string=>{:type=>:string, :nullable=>false},
                   :required_string_or_nil=>{:type=>:string, :nullable=>true},
                   :optional_string=>{:type=>:string, :nullable=>false},
                   :optional_string_or_nil=>{:type=>:string, :nullable=>true}
-              }, :required=>[:required_string, :required_string_or_nil], :nullable=>false},
+              }, :required=>[:required_string, :required_string_or_nil]},
               :required_nested_dto_or_nil=>{:type=>:object, :properties=>{
                   :required_string=>{:type=>:string, :nullable=>false},
                   :required_string_or_nil=>{:type=>:string, :nullable=>true},
                   :optional_string=>{:type=>:string, :nullable=>false},
                   :optional_string_or_nil=>{:type=>:string, :nullable=>true}
-              }, :required=>[:required_string, :required_string_or_nil], :nullable=>true},
+              }, :required=>[:required_string, :required_string_or_nil]},
               :optional_nested_dto=>{:type=>:object, :properties=>{
                   :required_string=>{:type=>:string, :nullable=>false},
                   :required_string_or_nil=>{:type=>:string, :nullable=>true},
                   :optional_string=>{:type=>:string, :nullable=>false},
                   :optional_string_or_nil=>{:type=>:string, :nullable=>true}
-              }, :required=>[:required_string, :required_string_or_nil], :nullable=>false},
+              }, :required=>[:required_string, :required_string_or_nil]},
               :optional_nested_dto_or_nil=>{:type=>:object, :properties=>{
                   :required_string=>{:type=>:string, :nullable=>false},
                   :required_string_or_nil=>{:type=>:string, :nullable=>true},
                   :optional_string=>{:type=>:string, :nullable=>false},
                   :optional_string_or_nil=>{:type=>:string, :nullable=>true}
-              }, :required=>[:required_string, :required_string_or_nil], :nullable=>true}
-          }, :required=>[:required_string, :required_string_or_nil, :required_string_with_enum,
-                         :required_string_or_nil_with_enum, :required_integer, :required_integer_or_nil,
-                         :required_boolean, :required_boolean_or_nil, :required_date, :required_date_or_nil,
-                         :required_date_time, :required_date_time_or_nil, :required_time, :required_time_or_nil,
-                         :hash, :required_array_of_values, :required_array_of_values_or_nil, :required_array_of_nested_dto,
-                         :required_array_of_nested_dto_or_nil, :required_nested_dto, :required_nested_dto_or_nil]
+              }, :required=>[:required_string, :required_string_or_nil]}
+          }, :required=>[
+              :required_string, :required_string_or_nil, :required_string_with_enum, :required_string_or_nil_with_enum,
+              :required_integer, :required_integer_or_nil,
+              :required_date, :required_date_or_nil,
+              :required_date_time, :required_date_time_or_nil,
+              :required_time, :required_time_or_nil,
+              :hash,
+              :required_array_of_values, :required_array_of_values_or_nil,
+              :required_array_of_nested_dto, :required_array_of_nested_dto_or_nil,
+              :required_nested_dto, :required_nested_dto_or_nil
+            ]
           }
         end
 
@@ -494,7 +510,7 @@ Dry::Swagger::Types::JSON::Decimal
         end
 
         it 'should generate a valid swagger documentation' do
-          expect(described_class.new.call(dto)).to match(expected_result)
+          expect(described_class.new.call(dto).to_swagger).to match(expected_result)
         end
       end
     end

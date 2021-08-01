@@ -1,81 +1,136 @@
 module Dry
   module Swagger
     class StructParser
-      SWAGGER_FIELD_TYPE_DEFINITIONS = {
-          "String" => { type: :string },
-          "Integer" => { type: :integer },
-          "TrueClass | FalseClass" => { type: :boolean },
-          "BigDecimal" => { type: :decimal },
-          "Float" => { type: :float },
-          "DateTime" => { type: :string, format: :datetime },
-          "Date" => { type: :string, format: :date },
-          "Time" => { type: :string, format: :time }
-      }
+      PREDICATE_TYPES = {
+          String: 'string',
+          Integer: 'integer',
+          Bool: 'boolean',
+          Float: 'float',
+          Date: 'date',
+          DateTime: 'datetime',
+          Time: 'time'
+      }.freeze
 
-      def call(dto)
-        documentation = generate_fields_documentation(dto.schema)
-        { :type => :object, :properties => documentation[:properties], :required => documentation[:required]}
+      # @api private
+      attr_reader :keys
+
+      # @api private
+      def initialize
+        @keys = {}
       end
 
-      def generate_fields_documentation(dto_schema)
-        documentation = { properties: {}, required: [] }
-        dto_schema.name_key_map.each do |name, schema_key_object|
-          documentation[:properties][name] = schema_key_object.type.optional? ?
-                                                 generate_field_properties(schema_key_object.type.right, true) :
-                                                 generate_field_properties(schema_key_object.type, false)
-
-          documentation[:required] << name if ::Dry::Swagger.struct_enable_required_validation && schema_key_object.required?
-        end
-        documentation
+      # @api private
+      def to_h
+        { keys: keys }
       end
 
-      def generate_field_properties(type, nullable)
-        field_type = type.name
-        if SWAGGER_FIELD_TYPE_DEFINITIONS[field_type] # IS PRIMITIVE FIELD?
-          definition = SWAGGER_FIELD_TYPE_DEFINITIONS[field_type]
-          definition = definition
-          if is_enum?(type.class.name) && ::Dry::Swagger.struct_enable_enums
-            enums = type.values
-            enums += [nil] if nullable
-            definition = definition.merge(enum: enums)
-          end
-        elsif is_array?(field_type)
-          definition = { type: :array }
-          if is_primitive?(type.type.member.name)
-            definition = definition
-            definition = definition.merge(items: SWAGGER_FIELD_TYPE_DEFINITIONS[type.type.member.name])
-          else
-            schema = is_array_with_dynamic_schema?(type.type.member) ? type.type.member.left : type.type.member
-            definition = definition.merge(items: call(schema))
-          end
-        else
-          schema = is_dynamic_schema?(type) ? type.left : type
-          definition = call(schema)
+      def call(dto, &block)
+        @keys = {}
+        visit(dto.schema.to_ast)
+        instance_eval(&block) if block_given?
+        self
+      end
+
+      # @api private
+      def visit(node, opts = {})
+        meth, rest = node
+        public_send(:"visit_#{meth}", rest, opts)
+      end
+
+      def visit_constructor(node, opts = {})
+        visit(node[0], opts)
+      end
+
+      def visit_schema(node, opts = {})
+        target = (key = opts[:key]) ? self.class.new : self
+
+        required = opts.fetch(:required, true)
+        nullable = opts.fetch(:nullable, false)
+
+        node[0].each do |child|
+          target.visit(child)
         end
 
-        ::Dry::Swagger.struct_enable_nullable_validation ? definition.merge(::Dry::Swagger.nullable_type => nullable) : definition
+        return unless key
+
+        target_info =  target.to_h if opts[:member]
+
+        type = opts[:array]? 'array' : 'hash'
+
+        keys[key] = {
+            type: type,
+            required: required,
+            ::Dry::Swagger.nullable_type => nullable,
+            **target_info
+        }
       end
 
-      private
-
-      def is_enum?(class_name)
-        class_name == 'Dry::Types::Enum'
+      def visit_key(node, opts = {})
+        name, required, rest = node
+        opts[:key] = name
+        opts[:required] = required
+        visit(rest, opts)
       end
 
-      def is_array?(type_name)
-        type_name == 'Array'
+      def visit_constrained(node, opts = {})
+        node.each {|it| visit(it, opts) }
       end
 
-      def is_primitive?(type_name)
-        !SWAGGER_FIELD_TYPE_DEFINITIONS[type_name].nil?
+      def visit_nominal(_node, _opts); end
+
+      def visit_predicate(node, opts = {})
+        name, rest = node
+        type = rest[0][1]
+
+        if name.equal?(:type?)
+          type = type.to_s.to_sym
+          return unless PREDICATE_TYPES[type]
+
+          type_definition = {
+              type: PREDICATE_TYPES[type],
+              required: opts.fetch(:required),
+              ::Dry::Swagger.nullable_type => opts.fetch(:nullable, false)
+          }
+
+          type_definition[:array] = opts[:array] if opts[:array]
+
+          keys[opts[:key]] = type_definition
+        elsif name.equal?(:included_in?)
+          type += [nil] if opts.fetch(:nullable, false)
+          keys[opts[:key]][:enum] = type
+        end
       end
 
-      def is_array_with_dynamic_schema?(member)
-        member.respond_to?(:right)
+      # @api private
+      def visit_and(node, opts = {})
+        left, right = node
+
+        visit(left, opts)
+        visit(right, opts)
       end
 
-      def is_dynamic_schema?(type)
-        !type.respond_to?(:schema)
+      def visit_enum(node, opts = {})
+        visit(node[0], opts)
+      end
+
+      def visit_sum(node, opts = {})
+        opts[:nullable] = true
+        visit(node[1], opts)
+      end
+
+      def visit_struct(node, opts = {})
+        opts[:member] = true
+
+        visit(node[1], opts)
+      end
+
+      def visit_array(node, opts = {})
+        opts[:array] = true
+        visit(node[0], opts)
+      end
+
+      def to_swagger
+        ::Dry::Swagger::DocumentationGenerator.new.generate_documentation(keys)
       end
     end
   end

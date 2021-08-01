@@ -15,16 +15,6 @@ module Dry
           time?: 'time'
       }.freeze
 
-      SWAGGER_FIELD_TYPE_DEFINITIONS = {
-          "string" => { type: :string },
-          "integer" => { type: :integer },
-          "boolean" => { type: :boolean },
-          "float" => { type: :float },
-          "datetime" => { type: :string, format: :datetime },
-          "date" => { type: :string, format: :date },
-          "time" => { type: :string, format: :time },
-      }.freeze
-
       # @api private
       attr_reader :keys
 
@@ -43,7 +33,7 @@ module Dry
         @keys = {}
         visit(contract.schema.to_ast)
         instance_eval(&block) if block_given?
-        to_swagger
+        self
       end
 
       # @api private
@@ -75,8 +65,7 @@ module Dry
       end
 
       def visit_not(_node, opts = {})
-        key = opts[:key]
-        keys[key][::Dry::Swagger.nullable_type] = true if ::Dry::Swagger.contract_enable_nullable_validation
+        keys[opts[:key]][::Dry::Swagger.nullable_type] = true if ::Dry::Swagger.contract_enable_nullable_validation
       end
 
       # @api private
@@ -111,7 +100,9 @@ module Dry
         elsif name.equal?(:array?)
           keys[key][:array] = true
         elsif name.equal?(:included_in?)
-          keys[key][:enum] = rest[0][1]
+          enums = rest[0][1]
+          enums += [nil] if opts.fetch(::Dry::Swagger.nullable_type, false)
+          keys[key][:enum] = enums
         elsif PREDICATE_TO_TYPE[name]
           keys[key][:type] = PREDICATE_TO_TYPE[name]
         else
@@ -139,34 +130,7 @@ module Dry
       end
 
       def to_swagger
-        generate_documentation(keys)
-      end
-
-      private
-
-      def generate_documentation(fields)
-        documentation = { properties: {}, required: [] }
-        fields.each do |field_name, attributes_hash|
-          documentation[:properties][field_name] = generate_field_properties(attributes_hash)
-          documentation[:required] << field_name if ::Dry::Swagger.contract_enable_required_validation && attributes_hash[:required]
-        end
-        { :type => :object, :properties => documentation[:properties], :required => documentation[:required] }
-      end
-
-      def generate_field_properties(attributes_hash)
-        if attributes_hash[:type] == 'array'
-          { type: :array, items: generate_documentation(attributes_hash[:keys]) }
-        elsif attributes_hash[:array] && attributes_hash[:type] != 'array'
-          { type: :array, items: SWAGGER_FIELD_TYPE_DEFINITIONS.fetch(attributes_hash[:type]) }
-        elsif attributes_hash[:type] == 'hash'
-          generate_documentation(attributes_hash[:keys])
-        else
-          field = SWAGGER_FIELD_TYPE_DEFINITIONS.fetch(attributes_hash[:type])
-          field = field.merge(::Dry::Swagger.nullable_type => attributes_hash[::Dry::Swagger.nullable_type] | false) if ::Dry::Swagger.contract_enable_nullable_validation
-          field = field.merge(enum: attributes_hash[:enum]) if attributes_hash[:enum] if ::Dry::Swagger.contract_enable_enums
-          field = field.merge(description: attributes_hash[:description]) if attributes_hash[:description] if ::Dry::Swagger.contract_enable_descriptions
-          field
-        end
+        DocumentationGenerator.new.generate_documentation(keys)
       end
     end
   end
