@@ -110,8 +110,12 @@ module Dry
       end
 
       def visit_sum(node, opts = {})
-        opts[:nullable] = true
-        visit(node[1], opts)
+        if node[0][0].equal?(:constrained)
+          opts[:nullable] = true
+          visit(node[1], opts) # ignore NilClass constrained
+        elsif node[0][0].equal?(:struct)
+          visit(node[0], opts) # grab left operand, this means if you have it defined as DTO1 | DTO2, it will grab DTO1
+        end
       end
 
       def visit_struct(node, opts = {})

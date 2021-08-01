@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'dry/swagger/types'
-require 'pp'
 
 RSpec.describe Dry::Swagger::ContractParser do
   type_definitions = {
