@@ -270,12 +270,12 @@ You can override default configurations by creating a file in config/initializer
     end
     
     Dry::Swagger::Config::ContractConfiguration.configuration do |config|
-          config.enable_required_validation = true / false       
-          config.enable_nullable_validation = true / false
-          config.enable_enums = true / false
-          config.enable_descriptions = true / false
-          config.nullable_type = :"x-nullable" / :nullable
-        end
+      config.enable_required_validation = true / false       
+      config.enable_nullable_validation = true / false
+      config.enable_enums = true / false
+      config.enable_descriptions = true / false
+      config.nullable_type = :"x-nullable" / :nullable
+    end
         
 By default, all these settings are true, and nullable_type is :"x-nullable".
 ## Development
