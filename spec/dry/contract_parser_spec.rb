@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'dry/swagger/types'
+require 'pp'
 
 RSpec.describe Dry::Swagger::ContractParser do
   type_definitions = {
@@ -579,69 +580,107 @@ bool?
     describe 'when Contract is passed to parser' do
       context 'and configuration nullable type is :"x-nullable"' do
         let(:expected_result) do
-          {:type=>:object, :properties=>{
-              :string=>{:type=>:string, :"x-nullable"=>false},
-              :string1=>{:type=>:string, :"x-nullable"=>true},
-              :string2=>{:type=>:string, :"x-nullable"=>false},
-              :string3=>{:type=>:string, :"x-nullable"=>false},
-              :string4=>{:type=>:string, :"x-nullable"=>true},
-              :string5=>{:type=>:string, :"x-nullable"=>false},
-              :integer=>{:type=>:integer, :"x-nullable"=>false},
-              :integer1=>{:type=>:integer, :"x-nullable"=>true},
-              :integer2=>{:type=>:integer, :"x-nullable"=>false},
-              :integer3=>{:type=>:integer, :"x-nullable"=>false},
-              :integer4=>{:type=>:integer, :"x-nullable"=>true},
-              :integer5=>{:type=>:integer, :"x-nullable"=>false},
-              :boolean=>{:type=>:boolean, :"x-nullable"=>false},
-              :boolean1=>{:type=>:boolean, :"x-nullable"=>true},
-              :boolean2=>{:type=>:boolean, :"x-nullable"=>false},
-              :boolean3=>{:type=>:boolean, :"x-nullable"=>false},
-              :boolean4=>{:type=>:boolean, :"x-nullable"=>true},
-              :boolean5=>{:type=>:boolean, :"x-nullable"=>false},
-              :date=>{:type=>:string, :format=>:date, :"x-nullable"=>false},
-              :date1=>{:type=>:string, :format=>:date, :"x-nullable"=>true},
-              :date2=>{:type=>:string, :format=>:date, :"x-nullable"=>false},
-              :date3=>{:type=>:string, :format=>:date, :"x-nullable"=>false},
-              :date4=>{:type=>:string, :format=>:date, :"x-nullable"=>true},
-              :date5=>{:type=>:string, :format=>:date, :"x-nullable"=>false},
-              :datetime=>{:type=>:string, :format=>:datetime, :"x-nullable"=>false},
-              :datetime1=>{:type=>:string, :format=>:datetime, :"x-nullable"=>true},
-              :datetime2=>{:type=>:string, :format=>:datetime, :"x-nullable"=>false},
-              :datetime3=>{:type=>:string, :format=>:datetime, :"x-nullable"=>false},
-              :datetime4=>{:type=>:string, :format=>:datetime, :"x-nullable"=>true},
-              :datetime5=>{:type=>:string, :format=>:datetime, :"x-nullable"=>false},
-              :hash=>{:type=>:object, :properties=>{
-                  :string=>{:type=>:string, :"x-nullable"=>false},
-                  :integer=>{:type=>:integer, :"x-nullable"=>true}
-              }, :required=>[:string]
-              },
-              :hash1=>{:type=>:object, :properties=>{
-                  :string=>{:type=>:string, :"x-nullable"=>false},
-                  :integer=>{:type=>:integer, :"x-nullable"=>true}
-              }, :required=>[:string]
-              },
-              :array=>{:type=>:array, :items=>{:type=>:integer, :"x-nullable"=>false}},
-              :array1=>{:type=>:array, :items=>{:type=>:string, :"x-nullable"=>false}},
-              :array2=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :string=>{:type=>:string, :"x-nullable"=>false},
-                  :integer=>{:type=>:integer, :"x-nullable"=>true}
-              }, :required=>[:string]}
-              },
-              :array3=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :string=>{:type=>:string, :"x-nullable"=>false},
-                  :integer=>{:type=>:integer, :"x-nullable"=>true}
-              }, :required=>[:string]}
-              },
-              :with_description=>{:type=>:string, :"x-nullable"=>false, :description=>"Minimum size: 5, Maximum size: 10"},
-              :string_with_enum=>{:enum=>["test", "test1"], :"x-nullable"=>false, :type=>:string}
-          }, :required=>[
-              :string, :string1, :string2,
-              :integer, :integer1, :integer2,
-              :boolean, :boolean1, :boolean2,
-              :date, :date1, :date2,
-              :datetime, :datetime1, :datetime2,
-              :hash, :array, :array2, :with_description, :string_with_enum
-          ]
+          {:type=>:object,
+           :properties=>
+               {:string=>{:type=>:string, :"x-nullable"=>false},
+                :string1=>{:type=>:string, :"x-nullable"=>true},
+                :string2=>{:type=>:string, :"x-nullable"=>false},
+                :string3=>{:type=>:string, :"x-nullable"=>false},
+                :string4=>{:type=>:string, :"x-nullable"=>true},
+                :string5=>{:type=>:string, :"x-nullable"=>false},
+                :integer=>{:type=>:integer, :"x-nullable"=>false},
+                :integer1=>{:type=>:integer, :"x-nullable"=>true},
+                :integer2=>{:type=>:integer, :"x-nullable"=>false},
+                :integer3=>{:type=>:integer, :"x-nullable"=>false},
+                :integer4=>{:type=>:integer, :"x-nullable"=>true},
+                :integer5=>{:type=>:integer, :"x-nullable"=>false},
+                :boolean=>{:type=>:boolean, :"x-nullable"=>false},
+                :boolean1=>{:type=>:boolean, :"x-nullable"=>true},
+                :boolean2=>{:type=>:boolean, :"x-nullable"=>false},
+                :boolean3=>{:type=>:boolean, :"x-nullable"=>false},
+                :boolean4=>{:type=>:boolean, :"x-nullable"=>true},
+                :boolean5=>{:type=>:boolean, :"x-nullable"=>false},
+                :date=>{:type=>:string, :format=>:date, :"x-nullable"=>false},
+                :date1=>{:type=>:string, :format=>:date, :"x-nullable"=>true},
+                :date2=>{:type=>:string, :format=>:date, :"x-nullable"=>false},
+                :date3=>{:type=>:string, :format=>:date, :"x-nullable"=>false},
+                :date4=>{:type=>:string, :format=>:date, :"x-nullable"=>true},
+                :date5=>{:type=>:string, :format=>:date, :"x-nullable"=>false},
+                :datetime=>{:type=>:string, :format=>:datetime, :"x-nullable"=>false},
+                :datetime1=>{:type=>:string, :format=>:datetime, :"x-nullable"=>true},
+                :datetime2=>{:type=>:string, :format=>:datetime, :"x-nullable"=>false},
+                :datetime3=>{:type=>:string, :format=>:datetime, :"x-nullable"=>false},
+                :datetime4=>{:type=>:string, :format=>:datetime, :"x-nullable"=>true},
+                :datetime5=>{:type=>:string, :format=>:datetime, :"x-nullable"=>false},
+                :hash=>
+                    {:type=>:object,
+                     :properties=>
+                         {:string=>{:type=>:string, :"x-nullable"=>false},
+                          :integer=>{:type=>:integer, :"x-nullable"=>true}},
+                     :required=>[:string],
+                     :"x-nullable"=>false},
+                :hash1=>
+                    {:type=>:object,
+                     :properties=>
+                         {:string=>{:type=>:string, :"x-nullable"=>false},
+                          :integer=>{:type=>:integer, :"x-nullable"=>true}},
+                     :required=>[:string],
+                     :"x-nullable"=>false},
+                :array=>
+                    {:type=>:array,
+                     :items=>{:type=>:integer, :"x-nullable"=>false},
+                     :"x-nullable"=>false},
+                :array1=>
+                    {:type=>:array,
+                     :items=>{:type=>:string, :"x-nullable"=>false},
+                     :"x-nullable"=>false},
+                :array2=>
+                    {:type=>:array,
+                     :items=>
+                         {:type=>:object,
+                          :properties=>
+                              {:string=>{:type=>:string, :"x-nullable"=>false},
+                               :integer=>{:type=>:integer, :"x-nullable"=>true}},
+                          :required=>[:string],
+                          :"x-nullable"=>false},
+                     :"x-nullable"=>false},
+                :array3=>
+                    {:type=>:array,
+                     :items=>
+                         {:type=>:object,
+                          :properties=>
+                              {:string=>{:type=>:string, :"x-nullable"=>false},
+                               :integer=>{:type=>:integer, :"x-nullable"=>true}},
+                          :required=>[:string],
+                          :"x-nullable"=>false},
+                     :"x-nullable"=>false},
+                :with_description=>
+                    {:type=>:string,
+                     :description=>"Minimum size: 5, Maximum size: 10",
+                     :"x-nullable"=>false},
+                :string_with_enum=>
+                    {:type=>:string, :enum=>["test", "test1"], :"x-nullable"=>false}},
+           :required=>
+               [:string,
+                :string1,
+                :string2,
+                :integer,
+                :integer1,
+                :integer2,
+                :boolean,
+                :boolean1,
+                :boolean2,
+                :date,
+                :date1,
+                :date2,
+                :datetime,
+                :datetime1,
+                :datetime2,
+                :hash,
+                :array,
+                :array2,
+                :with_description,
+                :string_with_enum]
           }
         end
 
@@ -658,69 +697,107 @@ bool?
 
       context 'and configuration nullable type is nullable' do
         let(:expected_result) do
-          {:type=>:object, :properties=>{
-              :string=>{:type=>:string, :nullable=>false},
-              :string1=>{:type=>:string, :nullable=>true},
-              :string2=>{:type=>:string, :nullable=>false},
-              :string3=>{:type=>:string, :nullable=>false},
-              :string4=>{:type=>:string, :nullable=>true},
-              :string5=>{:type=>:string, :nullable=>false},
-              :integer=>{:type=>:integer, :nullable=>false},
-              :integer1=>{:type=>:integer, :nullable=>true},
-              :integer2=>{:type=>:integer, :nullable=>false},
-              :integer3=>{:type=>:integer, :nullable=>false},
-              :integer4=>{:type=>:integer, :nullable=>true},
-              :integer5=>{:type=>:integer, :nullable=>false},
-              :boolean=>{:type=>:boolean, :nullable=>false},
-              :boolean1=>{:type=>:boolean, :nullable=>true},
-              :boolean2=>{:type=>:boolean, :nullable=>false},
-              :boolean3=>{:type=>:boolean, :nullable=>false},
-              :boolean4=>{:type=>:boolean, :nullable=>true},
-              :boolean5=>{:type=>:boolean, :nullable=>false},
-              :date=>{:type=>:string, :format=>:date, :nullable=>false},
-              :date1=>{:type=>:string, :format=>:date, :nullable=>true},
-              :date2=>{:type=>:string, :format=>:date, :nullable=>false},
-              :date3=>{:type=>:string, :format=>:date, :nullable=>false},
-              :date4=>{:type=>:string, :format=>:date, :nullable=>true},
-              :date5=>{:type=>:string, :format=>:date, :nullable=>false},
-              :datetime=>{:type=>:string, :format=>:datetime, :nullable=>false},
-              :datetime1=>{:type=>:string, :format=>:datetime, :nullable=>true},
-              :datetime2=>{:type=>:string, :format=>:datetime, :nullable=>false},
-              :datetime3=>{:type=>:string, :format=>:datetime, :nullable=>false},
-              :datetime4=>{:type=>:string, :format=>:datetime, :nullable=>true},
-              :datetime5=>{:type=>:string, :format=>:datetime, :nullable=>false},
-              :hash=>{:type=>:object, :properties=>{
-                  :string=>{:type=>:string, :nullable=>false},
-                  :integer=>{:type=>:integer, :nullable=>true}
-              }, :required=>[:string]
-              },
-              :hash1=>{:type=>:object, :properties=>{
-                  :string=>{:type=>:string, :nullable=>false},
-                  :integer=>{:type=>:integer, :nullable=>true}
-              }, :required=>[:string]
-              },
-              :array=>{:type=>:array, :items=>{:type=>:integer, :nullable=>false}},
-              :array1=>{:type=>:array, :items=>{:type=>:string, :nullable=>false}},
-              :array2=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :string=>{:type=>:string, :nullable=>false},
-                  :integer=>{:type=>:integer, :nullable=>true}
-              }, :required=>[:string]}
-              },
-              :array3=>{:type=>:array, :items=>{:type=>:object, :properties=>{
-                  :string=>{:type=>:string, :nullable=>false},
-                  :integer=>{:type=>:integer, :nullable=>true}
-              }, :required=>[:string]}
-              },
-              :with_description=>{:type=>:string, :nullable=>false, :description=>"Minimum size: 5, Maximum size: 10"},
-              :string_with_enum=>{:enum=>["test", "test1"], :nullable=>false, :type=>:string}
-          }, :required=>[
-              :string, :string1, :string2,
-              :integer, :integer1, :integer2,
-              :boolean, :boolean1, :boolean2,
-              :date, :date1, :date2,
-              :datetime, :datetime1, :datetime2,
-              :hash, :array, :array2, :with_description, :string_with_enum
-          ]
+          {:type=>:object,
+           :properties=>
+               {:string=>{:type=>:string, :nullable=>false},
+                :string1=>{:type=>:string, :nullable=>true},
+                :string2=>{:type=>:string, :nullable=>false},
+                :string3=>{:type=>:string, :nullable=>false},
+                :string4=>{:type=>:string, :nullable=>true},
+                :string5=>{:type=>:string, :nullable=>false},
+                :integer=>{:type=>:integer, :nullable=>false},
+                :integer1=>{:type=>:integer, :nullable=>true},
+                :integer2=>{:type=>:integer, :nullable=>false},
+                :integer3=>{:type=>:integer, :nullable=>false},
+                :integer4=>{:type=>:integer, :nullable=>true},
+                :integer5=>{:type=>:integer, :nullable=>false},
+                :boolean=>{:type=>:boolean, :nullable=>false},
+                :boolean1=>{:type=>:boolean, :nullable=>true},
+                :boolean2=>{:type=>:boolean, :nullable=>false},
+                :boolean3=>{:type=>:boolean, :nullable=>false},
+                :boolean4=>{:type=>:boolean, :nullable=>true},
+                :boolean5=>{:type=>:boolean, :nullable=>false},
+                :date=>{:type=>:string, :format=>:date, :nullable=>false},
+                :date1=>{:type=>:string, :format=>:date, :nullable=>true},
+                :date2=>{:type=>:string, :format=>:date, :nullable=>false},
+                :date3=>{:type=>:string, :format=>:date, :nullable=>false},
+                :date4=>{:type=>:string, :format=>:date, :nullable=>true},
+                :date5=>{:type=>:string, :format=>:date, :nullable=>false},
+                :datetime=>{:type=>:string, :format=>:datetime, :nullable=>false},
+                :datetime1=>{:type=>:string, :format=>:datetime, :nullable=>true},
+                :datetime2=>{:type=>:string, :format=>:datetime, :nullable=>false},
+                :datetime3=>{:type=>:string, :format=>:datetime, :nullable=>false},
+                :datetime4=>{:type=>:string, :format=>:datetime, :nullable=>true},
+                :datetime5=>{:type=>:string, :format=>:datetime, :nullable=>false},
+                :hash=>
+                    {:type=>:object,
+                     :properties=>
+                         {:string=>{:type=>:string, :nullable=>false},
+                          :integer=>{:type=>:integer, :nullable=>true}},
+                     :required=>[:string],
+                     :nullable=>false},
+                :hash1=>
+                    {:type=>:object,
+                     :properties=>
+                         {:string=>{:type=>:string, :nullable=>false},
+                          :integer=>{:type=>:integer, :nullable=>true}},
+                     :required=>[:string],
+                     :nullable=>false},
+                :array=>
+                    {:type=>:array,
+                     :items=>{:type=>:integer, :nullable=>false},
+                     :nullable=>false},
+                :array1=>
+                    {:type=>:array,
+                     :items=>{:type=>:string, :nullable=>false},
+                     :nullable=>false},
+                :array2=>
+                    {:type=>:array,
+                     :items=>
+                         {:type=>:object,
+                          :properties=>
+                              {:string=>{:type=>:string, :nullable=>false},
+                               :integer=>{:type=>:integer, :nullable=>true}},
+                          :required=>[:string],
+                          :nullable=>false},
+                     :nullable=>false},
+                :array3=>
+                    {:type=>:array,
+                     :items=>
+                         {:type=>:object,
+                          :properties=>
+                              {:string=>{:type=>:string, :nullable=>false},
+                               :integer=>{:type=>:integer, :nullable=>true}},
+                          :required=>[:string],
+                          :nullable=>false},
+                     :nullable=>false},
+                :with_description=>
+                    {:type=>:string,
+                     :description=>"Minimum size: 5, Maximum size: 10",
+                     :nullable=>false},
+                :string_with_enum=>
+                    {:type=>:string, :enum=>["test", "test1"], :nullable=>false}},
+           :required=>
+               [:string,
+                :string1,
+                :string2,
+                :integer,
+                :integer1,
+                :integer2,
+                :boolean,
+                :boolean1,
+                :boolean2,
+                :date,
+                :date1,
+                :date2,
+                :datetime,
+                :datetime1,
+                :datetime2,
+                :hash,
+                :array,
+                :array2,
+                :with_description,
+                :string_with_enum]
           }
         end
 
