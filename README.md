@@ -273,6 +273,44 @@ Or install it yourself as:
         "dto"
       ]
     }
+## Overriding fields on run time
+You can also modify the fields during runtime by passing a block after the .call() method.
+
+For example:
+    
+    Dry::Swagger::StructParser.new.call(DTO) do |it|
+      # types = string/integer/hash/array
+      
+      # Remove a field
+      its.keys = it.keys.except(:field_name) 
+      
+      # Add new field on root level
+      it.keys[:new_field_name] = { type: type, required: true/false, :it.config.nullable_type=>true/false } 
+      
+      # Add a new field in nested hash/array
+      it.keys[:nested_field][:keys][:new_field_name] = { 
+        type: type, required: true/false, :it.config.nullable_type=>true/false
+      }
+      
+      # Remove a field in nested hash/array
+      it.keys = it.keys[:nested_field][:keys].except(:field_name)
+      
+      # Add an array or hash
+      it.keys[:nested_field] = { 
+        type: "array/hash", required: true/false, :it.config.nullable_type=> true/false, keys: {
+          # List all nested fields
+          new_field: { type: :type, required: true/false, :it.config.nullable_type=>true/false }
+        }
+      }
+      
+      # Add an Array of primitive types, type field needs to be the element type(string, integer, float), 
+      and add an array: true flag
+      
+      it.keys[:array_field_name] = { 
+        type: type, array: true, required: true/false, :it.config.nullable_type=> true/false 
+      }
+      
+    end.to_swagger()
 ## Custom Configuration For Your Project
 You can override default configurations by creating a file in config/initializers/dry-swagger.rb and changing the following values.
 
