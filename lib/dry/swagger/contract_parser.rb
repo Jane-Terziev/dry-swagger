@@ -21,6 +21,7 @@ module Dry
       # @api private
       def initialize
         @keys = {}
+        @config = Config::ContractConfiguration
       end
 
       # @api private
@@ -65,13 +66,13 @@ module Dry
       end
 
       def visit_not(_node, opts = {})
-        keys[opts[:key]][::Dry::Swagger.nullable_type] = true if ::Dry::Swagger.contract_enable_nullable_validation
+        keys[opts[:key]][@config.nullable_type] = true
       end
 
       # @api private
       def visit_implication(node, opts = {})
         node.each do |el|
-          opts = opts.merge(required: false) if ::Dry::Swagger.contract_enable_required_validation
+          opts = opts.merge(required: false)
           visit(el, opts)
         end
       end
@@ -85,7 +86,7 @@ module Dry
       def visit_key(node, opts = {})
         name, rest = node
         opts = opts.merge(key: name)
-        opts = opts.merge(required: true) if ::Dry::Swagger.contract_enable_required_validation
+        opts = opts.merge(required: true)
         visit(rest, opts)
       end
 
@@ -96,12 +97,12 @@ module Dry
         key = opts[:key]
 
         if name.equal?(:key?)
-          keys[rest[0][1]] = { required: opts.fetch(:required, true) } if ::Dry::Swagger.contract_enable_required_validation
+          keys[rest[0][1]] = { required: opts.fetch(:required, true) }
         elsif name.equal?(:array?)
           keys[key][:array] = true
         elsif name.equal?(:included_in?)
           enums = rest[0][1]
-          enums += [nil] if opts.fetch(::Dry::Swagger.nullable_type, false)
+          enums += [nil] if opts.fetch(@config.nullable_type, false)
           keys[key][:enum] = enums
         elsif PREDICATE_TO_TYPE[name]
           keys[key][:type] = PREDICATE_TO_TYPE[name]
@@ -130,7 +131,7 @@ module Dry
       end
 
       def to_swagger
-        DocumentationGenerator.new.generate_documentation(keys)
+        DocumentationGenerator.new(@config).generate_documentation(keys)
       end
     end
   end

@@ -11,15 +11,13 @@ module Dry
           Time: 'time'
       }.freeze
 
-      # @api private
       attr_reader :keys
 
-      # @api private
       def initialize
         @keys = {}
+        @config = Config::StructConfiguration
       end
 
-      # @api private
       def to_h
         { keys: keys }
       end
@@ -31,7 +29,6 @@ module Dry
         self
       end
 
-      # @api private
       def visit(node, opts = {})
         meth, rest = node
         public_send(:"visit_#{meth}", rest, opts)
@@ -60,7 +57,7 @@ module Dry
         keys[key] = {
             type: type,
             required: required,
-            ::Dry::Swagger.nullable_type => nullable,
+            @config.nullable_type => nullable,
             **target_info
         }
       end
@@ -89,7 +86,7 @@ module Dry
           type_definition = {
               type: PREDICATE_TYPES[type],
               required: opts.fetch(:required),
-              ::Dry::Swagger.nullable_type => opts.fetch(:nullable, false)
+              @config.nullable_type => opts.fetch(:nullable, false)
           }
 
           type_definition[:array] = opts[:array] if opts[:array]
@@ -101,7 +98,6 @@ module Dry
         end
       end
 
-      # @api private
       def visit_and(node, opts = {})
         left, right = node
 
@@ -130,7 +126,7 @@ module Dry
       end
 
       def to_swagger
-        ::Dry::Swagger::DocumentationGenerator.new.generate_documentation(keys)
+        DocumentationGenerator.new(@config).generate_documentation(keys)
       end
     end
   end

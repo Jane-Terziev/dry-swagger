@@ -646,7 +646,7 @@ bool?
         end
 
         before do
-          Dry::Swagger.configuration do |config|
+          Dry::Swagger::Config::ContractConfiguration.configuration do |config|
             config.nullable_type = :"x-nullable"
           end
         end
@@ -725,7 +725,7 @@ bool?
         end
 
         before do
-          Dry::Swagger.configuration do |config|
+          Dry::Swagger::Config::ContractConfiguration.configuration do |config|
             config.nullable_type = :nullable
           end
         end

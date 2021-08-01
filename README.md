@@ -261,18 +261,22 @@ Or install it yourself as:
 ## Custom Configuration For Your Project
 You can override default configurations by creating a file in config/initializers/dry-swagger.rb and changing the following values.
 
-    Dry::Swagger.configuration do |config|
-      config.struct_enable_required_validation = true / false       
-      config.struct_enable_nullable_validation = true / false
-      config.struct_enable_enums = true / false
-      config.struct_enable_descriptions = true / false
-      
-      config.contract_enable_required_validation = true / false
-      config.contract_enable_nullable_validation = true / false
-      config.contract_enable_enums = true / false
-      config.contract_enable_descriptions = true / false
+    Dry::Swagger::Config::StructConfiguration.configuration do |config|
+      config.enable_required_validation = true / false       
+      config.enable_nullable_validation = true / false
+      config.enable_enums = true / false
+      config.enable_descriptions = true / false
       config.nullable_type = :"x-nullable" / :nullable
     end
+    
+    Dry::Swagger::Config::ContractConfiguration.configuration do |config|
+          config.enable_required_validation = true / false       
+          config.enable_nullable_validation = true / false
+          config.enable_enums = true / false
+          config.enable_descriptions = true / false
+          config.nullable_type = :"x-nullable" / :nullable
+        end
+        
 By default, all these settings are true, and nullable_type is :"x-nullable".
 ## Development
 

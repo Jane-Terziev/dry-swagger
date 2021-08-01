@@ -386,7 +386,7 @@ Dry::Swagger::Types::JSON::Decimal
         end
 
         before do
-          Dry::Swagger.configuration do |config|
+          Dry::Swagger::Config::StructConfiguration.configuration do |config|
             config.nullable_type = :"x-nullable"
           end
         end
@@ -504,7 +504,7 @@ Dry::Swagger::Types::JSON::Decimal
         end
 
         before do
-          Dry::Swagger.configuration do |config|
+          Dry::Swagger::Config::StructConfiguration.configuration do |config|
             config.nullable_type = :nullable
           end
         end
