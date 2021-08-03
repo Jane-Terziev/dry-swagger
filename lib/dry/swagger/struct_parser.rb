@@ -119,10 +119,9 @@ module Dry
         if node[0][0].equal?(:constrained)
           opts[:nullable] = true
           visit(node[1], opts) # ignore NilClass constrained
-        elsif node[0][0].equal?(:struct) && node[1][0].equal?(:struct)
+        elsif node[0][0].equal?(:struct) || node[0][0].equal?(:sum)
           opts[:oneOf] = true
-          visit(node[0], opts)
-          visit(node[1], opts)
+          node.each { |child| visit(child, opts) unless child.is_a?(Hash) }
         end
       end
 
