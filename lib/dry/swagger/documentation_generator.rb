@@ -40,12 +40,25 @@ module Dry
           attributes_hash.each_with_index do |_, index|
             properties["definition_#{index + 1}"] = generate_field_properties(attributes_hash[index])
           end
-          {
-              oneOf: attributes_hash.map{ |it| generate_field_properties(it) },
-              type: :object,
-              properties: properties,
-              example: 'Dynamic Field. See Model Definitions'
-          }
+          if attributes_hash[0][:type] == 'array'
+            attributes_hash.each { |definition| definition[:type] = 'hash'}
+            {
+                type: :array,
+                items: {
+                    type: :object,
+                    properties: properties,
+                    oneOf: attributes_hash.map{ |it| generate_field_properties(it) },
+                    example: 'Dynamic Field. See Model Definitions'
+                },
+            }
+          else
+            {
+                oneOf: attributes_hash.map{ |it| generate_field_properties(it) },
+                type: :object,
+                properties: properties,
+                example: 'Dynamic Field. See Model Definitions'
+            }
+          end
         else
           if attributes_hash[:type] == 'array'
             items = generate_documentation(attributes_hash.fetch(:keys))
