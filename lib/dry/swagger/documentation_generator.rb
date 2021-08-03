@@ -19,7 +19,11 @@ module Dry
         documentation = { properties: {}, required: [] }
         fields.each do |field_name, attributes_hash|
           documentation[:properties][field_name] = generate_field_properties(attributes_hash)
-          documentation[:required] << field_name if attributes_hash.fetch(:required, true) && @config.enable_required_validation
+          if attributes_hash.is_a?(Hash)
+            documentation[:required] << field_name if attributes_hash.fetch(:required, true) && @config.enable_required_validation
+          else
+            documentation[:required] << field_name if attributes_hash[0].fetch(:required, true) && @config.enable_required_validation
+          end
 
         rescue Errors::MissingTypeError => e
           raise StandardError.new e.message % { field_name: field_name, valid_types: SWAGGER_FIELD_TYPE_DEFINITIONS.keys, attributes_hash: attributes_hash }
@@ -31,35 +35,48 @@ module Dry
       end
 
       def generate_field_properties(attributes_hash)
-        if attributes_hash[:type] == 'array'
-          items = generate_documentation(attributes_hash.fetch(:keys))
-          items =  @config.enable_nullable_validation ?
-                       items.merge(@config.nullable_type => attributes_hash.fetch(@config.nullable_type, false)) :
-                       items.merge(@config.nullable_type => true)
-          documentation = { type: :array, items: items }
-        elsif attributes_hash[:array] && attributes_hash.fetch(:type) != 'array'
-          items = SWAGGER_FIELD_TYPE_DEFINITIONS.fetch(attributes_hash.fetch(:type))
-          items = @config.enable_nullable_validation ?
-                      items.merge(@config.nullable_type => attributes_hash.fetch(@config.nullable_type, false)) :
-                      items.merge(@config.nullable_type => true)
-          documentation = { type: :array, items:  items }
-        elsif attributes_hash[:type] == 'hash'
-          raise Errors::MissingHashSchemaError.new unless attributes_hash[:keys]
-          documentation = generate_documentation(attributes_hash.fetch(:keys))
+        if attributes_hash.is_a?(Array)
+          properties = {}
+          attributes_hash.each_with_index do |_, index|
+            properties["definition_#{index + 1}"] = generate_field_properties(attributes_hash[index])
+          end
+          {
+              oneOf: attributes_hash.map{ |it| generate_field_properties(it) },
+              type: :object,
+              properties: properties,
+              example: 'Dynamic Field. See Model Definitions'
+          }
         else
-          documentation = SWAGGER_FIELD_TYPE_DEFINITIONS.fetch(attributes_hash.fetch(:type))
-          if attributes_hash[:enum] && @config.enable_enums
-            documentation = documentation.merge(enum: attributes_hash.fetch(:enum))
+          if attributes_hash[:type] == 'array'
+            items = generate_documentation(attributes_hash.fetch(:keys))
+            items =  @config.enable_nullable_validation ?
+                         items.merge(@config.nullable_type => attributes_hash.fetch(@config.nullable_type, false)) :
+                         items.merge(@config.nullable_type => true)
+            documentation = { type: :array, items: items }
+          elsif attributes_hash[:array] && attributes_hash.fetch(:type) != 'array'
+            items = SWAGGER_FIELD_TYPE_DEFINITIONS.fetch(attributes_hash.fetch(:type))
+            items = @config.enable_nullable_validation ?
+                        items.merge(@config.nullable_type => attributes_hash.fetch(@config.nullable_type, false)) :
+                        items.merge(@config.nullable_type => true)
+            documentation = { type: :array, items:  items }
+          elsif attributes_hash[:type] == 'hash'
+            raise Errors::MissingHashSchemaError.new unless attributes_hash[:keys]
+            documentation = generate_documentation(attributes_hash.fetch(:keys))
+          else
+            documentation = SWAGGER_FIELD_TYPE_DEFINITIONS.fetch(attributes_hash.fetch(:type))
+            if attributes_hash[:enum] && @config.enable_enums
+              documentation = documentation.merge(enum: attributes_hash.fetch(:enum))
+            end
+
+            if attributes_hash[:description] && @config.enable_descriptions
+              documentation = documentation.merge(description: attributes_hash.fetch(:description))
+            end
           end
 
-          if attributes_hash[:description] && @config.enable_descriptions
-            documentation = documentation.merge(description: attributes_hash.fetch(:description))
-          end
+          @config.enable_nullable_validation ?
+              documentation.merge(@config.nullable_type => attributes_hash.fetch(@config.nullable_type, false)) :
+              documentation.merge(@config.nullable_type => true)
         end
-
-        @config.enable_nullable_validation ?
-            documentation.merge(@config.nullable_type => attributes_hash.fetch(@config.nullable_type, false)) :
-            documentation.merge(@config.nullable_type => true)
 
       rescue KeyError
         raise Errors::MissingTypeError.new
