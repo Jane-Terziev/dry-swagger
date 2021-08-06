@@ -15,269 +15,269 @@ And then execute:
 
     bundle install
 
-Or install it yourself as:
+After installing, execute the following command:
+    
+    rake dry-swagger:install
 
-    gem install dry-swagger
+This will generate configuration files in your project under `project/config`. See Configuration section for more details.
 
-## Usage
-## Dry::Validation::Contract
-    class Contract < Dry::Validation::Contract
-        json do
-            required(:required_field).value(:str?)
-            required(:required_nullable_field).maybe(:str?)
-            required(:required_filled_field).filled(:str?)
-            
-            optional(:optional_field).value(:str?)
-            optional(:optional_nullable_field).maybe(:str?)
-            optional(:optional_filled_field).filled(:str?)
+##Usage
+
+####With Dry::Validation::Contract
+Lets say we have the following Dry::Validation::Contract definition:
+    
+    class TestContract < Dry::Validation::Contract
+        params do
+            required(:some_field).value(:str?, min_size?: 5, max_size?: 10)
+            required(:some_array_of_objects).array(:hash) do
+                required(:some_nested_attribute).value(:str?)
+            end
+            required(:some_array_of_integers).array(:int?)
+            required(:dto).value(:hash) do
+                optional(:some_nested_attribute).maybe(:str?)
+            end
         end
     end
     
-    Dry::Swagger::ContractParser.new.call(Contract).to_swagger
-    => {
-         "type": "object",
-         "properties": {
-           "required_field": {
-             "type": "string",
-             "nullable": false
-           },
-           "required_nullable_field": {
-             "type": "string",
-             "nullable": true
-           },
-           "required_filled_field": {
-             "type": "string",
-             "nullable": false
-           },
-           "optional_field": {
-             "type": "string",
-             "nullable": false
-           },
-           "optional_nullable_field": {
-             "type": "string",
-             "nullable": true
-           },
-           "optional_filled_field": {
-             "type": "string",
-             "nullable": false
-           }
-         },
-         "required": [
-           "required_field",
-           "required_nullable_field",
-           "required_filled_field"
-         ]
-       }
-#### With nested fields - hash or array
-    class Contract < Dry::Validation::Contract
-      json do
-        required(:array_field).array(:int?)
-        required(:array_of_hash).array(:hash) do
-          required(:field).value(:str?)
-        end
-        required(:hash_field).hash do
-          required(:field).value(:str?)
-        end
-      end
-    end
-    
-    Dry::Swagger::ContractParser.new.call(Contract).to_swagger
-    => {
-         "type": "object",
-         "properties": {
-           "array_field": {
-             "type": "array",
-             "items": {
-               "type": "integer"
-             }
-           },
-           "array_of_hash": {
-             "type": "array",
-             "items": {
-               "type": "object",
-               "properties": {
-                 "field": {
-                   "type": "string",
-                   "x-nullable": false
-                 }
-               },
-               "required": [
-                 "field"
-               ]
-             }
-           },
-           "hash_field": {
-             "type": "object",
-             "properties": {
-               "field": {
-                 "type": "string",
-                 "x-nullable": false
-               }
-             },
-             "required": [
-               "field"
-             ]
-           }
-         },
-         "required": [
-           "array_field",
-           "array_of_hash",
-           "hash_field"
-         ]
-       }
+    parser = Dry::Swagger::ContractParser.new
 
-### With Dry::Struct
-    class DTO < Dry::Struct
-      attribute  :required_string, Types::String
-      attribute  :required_nullable_string, Types::String.optional
-      attribute  :required_string_with_enum, Types::String.enum('enum1')
-      attribute? :optional_string, Types::String
-      attribute? :optional_nullable_string, Types::String.optional
-    end
+`parser.call(TestContract)` will set the `keys` of the `parser` object to:
     
-    Dry::Swagger::StructParser.new.call(DTO).to_swagger
-    => {
-         "type": "object",
-         "properties": {
-           "required_string": {
-             "type": "string",
-             "x-nullable": false
-           },
-           "required_nullable_string": {
-             "type": "string",
-             "x-nullable": true
-           },
-           "required_string_with_enum": {
-             "type": "string",
-             "enum": [
-               "enum1"
-             ],
-             "x-nullable": false
-           },
-           "optional_string": {
-             "type": "string",
-             "x-nullable": false
-           },
-           "optional_nullable_string": {
-             "type": "string",
-             "x-nullable": true
-           }
+    {
+        :some_field => {
+            :required => true,
+            :type => "string",
+            :description => "Minimum size: 5, Maximum size: 10"
+        },
+         :some_array_of_objects => { 
+            :required => true,
+            :array => true,
+            :type => "array",
+            :keys => {
+                :some_nested_attribute => {
+                    :required=>true, :type=>"string"
+                }
+            }
          },
-         "required": [
-           "required_string",
-           "required_nullable_string",
-           "required_string_with_enum"
-         ]
-       }
-#### With nested fields
-    class NestedDTO < Dry::Struct
-      attribute  :required_string, Types::String
-      attribute  :required_nullable_string, Types::String.optional
-      attribute  :required_string_with_enum, Types::String.enum('enum1')
-      attribute? :optional_string, Types::String
-      attribute? :optional_nullable_string, Types::String.optional
-    end
+         :some_array_of_integers => {
+            :required=>true, 
+            :array=>true, 
+            :type=>"integer"
+         },
+         :dto => {
+            :required => true,
+            :type => "hash",
+            :keys => {
+                :some_nested_attribute => {
+                    :required => false, 
+                    :"x-nullable"=>true, 
+                    :type=>"string"
+                }
+            }
+         }
+    }
+
+As we can see, the `ContractParser` goes through all the params defined in the
+schema and generates a hash. The hash is saved in the `keys` attribute of the parser,
+so that we can call `to_swagger` later.
+
+The required key in our result will be set to `true` if the field is defined as
+`required(:field_name)`, and `false` if defined as `optional(:field_name)`.
+
+The "x-nullable" key depends on whether we have defined the field as value, maybe or filled.
+
+For nested objects like array of objects or hash, we add a keys field with a definition
+for each field inside the nested hash.
+
+If the field is an array of primitive type, the type field will equal to the primitive type, and a
+array flag will be set on the field.
+
+Calling `parser.to_swagger` will give the following result:
     
-    class DTO < Dry::Struct
-      attribute  :array_of_integer, Types::Array.of(Types::Integer)
-      attribute  :array_of_objects, Types::Array.of(NestedDTO)
-      attribute  :dto, NestedDTO
-    end
-    
-    Dry::Swagger::StructParser.new.call(DTO).to_swagger
-    => {
+    {
       "type": "object",
       "properties": {
-        "array_of_integer": {
-          "type": "array",
-          "items": {
-            "type": "integer"
-          },
+        "some_field": {
+          "type": "string",
+          "description": "Minimum size: 5, Maximum size: 10",
           "x-nullable": false
         },
-        "array_of_objects": {
+        "some_array_of_objects": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "required_string": {
+              "some_nested_attribute": {
                 "type": "string",
                 "x-nullable": false
-              },
-              "required_nullable_string": {
-                "type": "string",
-                "x-nullable": true
-              },
-              "required_string_with_enum": {
-                "type": "string",
-                "enum": [
-                  "enum1"
-                ],
-                "x-nullable": false
-              },
-              "optional_string": {
-                "type": "string",
-                "x-nullable": false
-              },
-              "optional_nullable_string": {
-                "type": "string",
-                "x-nullable": true
               }
             },
             "required": [
-              "required_string",
-              "required_nullable_string",
-              "required_string_with_enum"
-            ]
+              "some_nested_attribute"
+            ],
+            "x-nullable": false
+          },
+          "x-nullable": false
+        },
+        "some_array_of_integers": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "x-nullable": false
           },
           "x-nullable": false
         },
         "dto": {
           "type": "object",
           "properties": {
-            "required_string": {
-              "type": "string",
-              "x-nullable": false
-            },
-            "required_nullable_string": {
-              "type": "string",
-              "x-nullable": true
-            },
-            "required_string_with_enum": {
-              "type": "string",
-              "enum": [
-                "enum1"
-              ],
-              "x-nullable": false
-            },
-            "optional_string": {
-              "type": "string",
-              "x-nullable": false
-            },
-            "optional_nullable_string": {
+            "some_nested_attribute": {
               "type": "string",
               "x-nullable": true
             }
           },
           "required": [
-            "required_string",
-            "required_nullable_string",
-            "required_string_with_enum"
+    
           ],
           "x-nullable": false
         }
       },
       "required": [
-        "array_of_integer",
-        "array_of_objects",
+        "some_field",
+        "some_array_of_objects",
+        "some_array_of_integers",
         "dto"
       ]
     }
-## Overriding fields on run time
-You can also modify the fields during runtime by passing a block after the .call() method.
 
-For example:
+####With Dry::Struct
+The `Dry::Swagger::StructParser` works the same as the contract parser.
+
+The required key depends on whether we define the field as attribute or attribute?
+
+The "x-nullable" key depends on whether we define the type as Type or Type.optional.
+
+For more complex types, for example DTO1 | DTO2 or Types::Array.of(DTO1 | DTO2), 
+the parser converts the field value to an array of both schemas.
+
+Example:
     
+    class DTO1 < Dry::Struct
+        attribute :dto1_field, Types::String
+    end
+    
+    class DTO2 < Dry::Struct
+        attribute :dto2_field, Types::String
+    end
+    
+    class DTO < Dry::Struct
+        attribute :dynamic_dto, DTO1 | DTO2
+    end
+    parser = Dry::Swagger::StructParser.new
+    
+    parser.call(DTO)
+    => {
+         "dynamic_dto": [ # ARRAY
+           {
+             "type": "hash",
+             "required": true,
+             "x-nullable": false,
+             "keys": {
+               "dto1_field": {
+                 "type": "string",
+                 "required": true,
+                 "x-nullable": false
+               }
+             }
+           },
+           {
+             "type": "hash",
+             "required": true,
+             "x-nullable": false,
+             "keys": {
+               "dto2_field": {
+                 "type": "string",
+                 "required": true,
+                 "x-nullable": false
+               }
+             }
+           }
+         ]
+       }
+
+Calling `parser.to_swagger` will give the following result:
+    
+    {
+      "type": "object",
+      "properties": {
+        "dynamic_dto": {
+          "type": "object",
+          "properties": {
+            "definition_1": {
+              "type": "object",
+              "properties": {
+                "dto1_field": {
+                  "type": "string",
+                  "x-nullable": false
+                }
+              },
+              "required": [
+                "dto1_field"
+              ],
+              "x-nullable": false
+            },
+            "definition_2": {
+              "type": "object",
+              "properties": {
+                "dto2_field": {
+                  "type": "string",
+                  "x-nullable": false
+                }
+              },
+              "required": [
+                "dto2_field"
+              ],
+              "x-nullable": false
+            }
+          },
+          "example": "Dynamic Field. See Model Definitions",
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "dto1_field": {
+                  "type": "string",
+                  "x-nullable": false
+                }
+              },
+              "required": [
+                "dto1_field"
+              ],
+              "x-nullable": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "dto2_field": {
+                  "type": "string",
+                  "x-nullable": false
+                }
+              },
+              "required": [
+                "dto2_field"
+              ],
+              "x-nullable": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "dynamic_dto"
+      ]
+    }
+
+## Overriding fields
+You can also modify the fields by passing a block after the .call() method.
+
     Dry::Swagger::StructParser.new.call(DTO) do |it|
       # types = string/integer/hash/array
       
@@ -311,26 +311,12 @@ For example:
       }
       
     end.to_swagger()
-## Custom Configuration For Your Project
-You can override default configurations by creating a file in config/initializers/dry-swagger.rb and changing the following values.
-
-    Dry::Swagger::Config::StructConfiguration.configuration do |config|
-      config.enable_required_validation = true / false       
-      config.enable_nullable_validation = true / false
-      config.enable_enums = true / false
-      config.enable_descriptions = true / false
-      config.nullable_type = :"x-nullable" / :nullable
-    end
     
-    Dry::Swagger::Config::ContractConfiguration.configuration do |config|
-      config.enable_required_validation = true / false       
-      config.enable_nullable_validation = true / false
-      config.enable_enums = true / false
-      config.enable_descriptions = true / false
-      config.nullable_type = :"x-nullable" / :nullable
-    end
-        
-By default, all these settings are true, and nullable_type is :"x-nullable".
+##Custom Configuration For Your Project
+You can override default configurations by changing the values in the `config/initializers/dry-swagger.rb` file generated from the rake command in the Installation section.
+
+To modify the descriptions for the Contracts, modify the values in `config/locale/dry-swagger.yml`.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
