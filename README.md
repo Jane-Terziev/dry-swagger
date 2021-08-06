@@ -21,9 +21,9 @@ After installing, execute the following command:
 
 This will generate configuration files in your project under `project/config`. See Configuration section for more details.
 
-##Usage
+## Usage
 
-####With Dry::Validation::Contract
+#### With Dry::Validation::Contract
 Lets say we have the following Dry::Validation::Contract definition:
     
     class TestContract < Dry::Validation::Contract
@@ -149,7 +149,7 @@ Calling `parser.to_swagger` will give the following result:
       ]
     }
 
-####With Dry::Struct
+#### With Dry::Struct
 The `Dry::Swagger::StructParser` works the same as the contract parser.
 
 The required key depends on whether we define the field as attribute or attribute?
