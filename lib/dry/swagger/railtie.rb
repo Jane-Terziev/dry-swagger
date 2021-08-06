@@ -7,8 +7,7 @@ module Dry
       railtie_name :"dry-swagger"
 
       rake_tasks do
-        path = File.expand_path(__dir__)
-        Dir.glob("#{path}/tasks/**/*.rake").each { |f| load f }
+        load "dry/swagger/tasks/configuration_generator.rake"
       end
     end
   end
