@@ -8,6 +8,7 @@ require 'dry/swagger/config/configuration'
 require 'dry/swagger/config/contract_configuration'
 require 'dry/swagger/config/struct_configuration'
 require 'i18n'
+require 'dry/swagger/railtie' if defined?(Rails)
 
 module Dry
   module Swagger

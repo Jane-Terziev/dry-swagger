@@ -312,7 +312,7 @@ You can also modify the fields by passing a block after the .call() method.
       
     end.to_swagger()
     
-##Custom Configuration For Your Project
+## Custom Configuration For Your Project
 You can override default configurations by changing the values in the `config/initializers/dry-swagger.rb` file generated from the rake command in the Installation section.
 
 To modify the descriptions for the Contracts, modify the values in `config/locale/dry-swagger.yml`.
