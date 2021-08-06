@@ -4,7 +4,7 @@ require 'rails'
 module Dry
   module Swagger
     class Railtie < Rails::Railtie
-      railtie_name :dry-swagger
+      railtie_name :"dry-swagger"
 
       rake_tasks do
         path = File.expand_path(__dir__)

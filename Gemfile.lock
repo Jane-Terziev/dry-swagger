@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dry-swagger (0.6.3)
+    dry-swagger (0.6.4)
 
 GEM
   remote: https://rubygems.org/
