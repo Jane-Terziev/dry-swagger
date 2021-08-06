@@ -116,18 +116,8 @@ module Dry
         end
       end
 
-      def predicate_description(name, validation)
-        case name
-        when 'eql?' then "Must be equal to #{validation}"
-        when 'max_size?' then "Maximum size: #{validation}"
-        when 'min_size?' then "Minimum size: #{validation}"
-        when 'gteq?' then "Greater or equal #{validation}"
-        when 'gt?' then "Greater than #{validation}"
-        when 'lt?' then "Lower than #{validation}"
-        when 'lteq?' then "Lower than or equal to #{validation}"
-        else
-          ''
-        end
+      def predicate_description(name, value)
+        ::I18n.t("contract.descriptions.#{name}", value: value, default: '')
       end
 
       def to_swagger

@@ -46,6 +46,8 @@ GEM
       dry-equalizer (~> 0.2)
       dry-initializer (~> 3.0)
       dry-schema (~> 1.5, >= 1.5.2)
+    i18n (1.8.10)
+      concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     rake (12.3.3)
     rspec (3.10.0)
@@ -69,6 +71,7 @@ DEPENDENCIES
   dry-struct
   dry-swagger!
   dry-validation
+  i18n
   rake (~> 12.0)
   rspec (~> 3.0)
 
