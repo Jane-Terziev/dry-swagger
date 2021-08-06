@@ -4,6 +4,7 @@ namespace 'dry-swagger' do
   desc 'Create a configuration file for Struct and Contract'
   task :create_configuration_file do
     FileUtils.mkdir_p "#{ Dir.pwd }/config/initializers/"
+    puts "Created #{ Dir.pwd }/config/initializers/dry-swagger.rb"
     File.open("#{ Dir.pwd }/config/initializers/dry-swagger.rb", "w") { |file|
 file.puts 'Dry::Swagger::Config::StructConfiguration.configuration do |config|
   config.enable_required_validation = true
@@ -26,6 +27,7 @@ end'
   desc 'Create a YAML file for Contract swagger field descriptions'
   task :create_contract_descriptions_yaml do
     FileUtils.mkdir_p "#{ Dir.pwd }/config/locales/"
+    puts "Created #{ Dir.pwd }/config/locales/dry-swagger.yml"
     File.open("#{ Dir.pwd }/config/locales/dry-swagger.yml", "w") { |file|
 file.puts 'en:
   contract:
