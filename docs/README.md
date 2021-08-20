@@ -2,10 +2,7 @@
 
 Generate a valid and up to date swagger documentation out of your dry-structs and dry-validations
 
-The gem is still work in progress and is not yet fully tested. Please use it with caution until version 1.0.0.
-
-Current version is 0.7.2
-
+The gem is still work in progress and is not yet fully tested.
 ## Installation
 
 Add this line to your application's Gemfile:
