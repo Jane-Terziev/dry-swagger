@@ -5,10 +5,11 @@ module Dry
           "string" => { type: :string },
           "integer" => { type: :integer },
           "boolean" => { type: :boolean },
-          "float" => { type: :float },
+          "float" => { type: :number, format: :float },
           "datetime" => { type: :string, format: :datetime },
           "date" => { type: :string, format: :date },
           "time" => { type: :string, format: :time },
+          "enum" => { type: :string }
       }.freeze
 
       def initialize(config)

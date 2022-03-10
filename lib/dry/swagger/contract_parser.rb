@@ -12,7 +12,8 @@ module Dry
           int?: 'integer',
           nil?: 'nil',
           str?: 'string',
-          time?: 'time'
+          time?: 'time',
+          included_in?: 'string'
       }.freeze
 
       # @api private
@@ -59,6 +60,14 @@ module Dry
 
       # @api private
       def visit_and(node, opts = {})
+        left, right = node
+
+        visit(left, opts)
+        visit(right, opts)
+      end
+
+      # @api private
+      def visit_or(node, opts = {})
         left, right = node
 
         visit(left, opts)
