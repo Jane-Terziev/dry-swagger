@@ -90,11 +90,6 @@ module Dry
           type = type.to_s.to_sym
           return unless PREDICATE_TYPES[type]
 
-          # print node
-          # puts
-          # print opts
-          # puts
-
           type_definition = {
               type: PREDICATE_TYPES[type],
               required: opts.fetch(:required),
