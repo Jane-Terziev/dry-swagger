@@ -4,7 +4,8 @@ module Dry
       PREDICATE_TYPES = {
           String: 'string',
           Integer: 'integer',
-          Bool: 'boolean',
+          TrueClass: 'boolean',
+          FalseClass: 'boolean',
           Float: 'float',
           Date: 'date',
           DateTime: 'datetime',
@@ -89,6 +90,11 @@ module Dry
           type = type.to_s.to_sym
           return unless PREDICATE_TYPES[type]
 
+          # print node
+          # puts
+          # print opts
+          # puts
+
           type_definition = {
               type: PREDICATE_TYPES[type],
               required: opts.fetch(:required),
@@ -117,7 +123,7 @@ module Dry
 
       def visit_sum(node, opts = {})
         if node[0][0].equal?(:constrained)
-          opts[:nullable] = true
+          opts[:nullable] = true if node[0][1][0][1][0].equal?(NilClass)
           visit(node[1], opts) # ignore NilClass constrained
         elsif node[0][0].equal?(:struct) || node[0][0].equal?(:sum)
           opts[:oneOf] = true
