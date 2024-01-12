@@ -11,8 +11,16 @@ module Dry
           "time" => { type: :string, format: :time },
       }.freeze
 
-      def initialize(config)
-        @config = config
+      def initialize
+        @config = Config::SwaggerConfiguration
+      end
+
+      def from_struct(struct)
+        generate_documentation(DryStructParser::StructSchemaParser.new.call(struct).keys)
+      end
+
+      def from_validation(validation)
+        generate_documentation(DryValidationParser::ValidationSchemaParser.new.call(validation).keys)
       end
 
       def generate_documentation(fields)
@@ -45,7 +53,7 @@ module Dry
           documentation = generate_for_primitive_type(definition)
         end
         @config.enable_nullable_validation ?
-            documentation.merge(@config.nullable_type => definition.fetch(@config.nullable_type, false)) :
+            documentation.merge(@config.nullable_type => definition.fetch(:nullable, false)) :
             documentation.merge(@config.nullable_type => true)
 
       rescue KeyError
@@ -80,7 +88,7 @@ module Dry
                     SWAGGER_FIELD_TYPE_DEFINITIONS.fetch(definition.fetch(:type)) :
                     generate_documentation(definition.fetch(:keys))
         items =  @config.enable_nullable_validation ?
-                     items.merge(@config.nullable_type => definition.fetch(@config.nullable_type, false)) :
+                     items.merge(@config.nullable_type => definition.fetch(:nullable, false)) :
                      items.merge(@config.nullable_type => true)
         { type: :array, items: items }
       end

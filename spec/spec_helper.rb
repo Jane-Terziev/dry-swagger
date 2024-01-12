@@ -1,9 +1,11 @@
-require "bundler/setup"
+# frozen_string_literal: true
+
 require "dry/swagger"
-require 'dry-types'
-require 'dry-schema'
-require 'dry-validation'
-require 'dry-struct'
+require "dry_struct_parser"
+require "dry_validation_parser"
+require "dry-struct"
+require "dry-validation"
+require "dry/swagger/types"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

@@ -1,7 +1,7 @@
 module Dry
   module Swagger
     module Config
-      module StructConfiguration
+      module SwaggerConfiguration
         extend Configuration
 
         define_setting :enable_required_validation, true
