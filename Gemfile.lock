@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dry-swagger (1.0.0)
+    dry-swagger (2.0.0)
       dry_struct_parser
       dry_validation_parser
 
@@ -85,4 +85,4 @@ DEPENDENCIES
   rspec (~> 3.0)
 
 BUNDLED WITH
-   2.1.4
+   2.5.4
