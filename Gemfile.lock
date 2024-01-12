@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dry-swagger (2.0.0)
+    dry-swagger (2.0.2)
       dry_struct_parser
       dry_validation_parser
 
