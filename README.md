@@ -3,6 +3,25 @@
 Generate a valid and up to date swagger documentation out of your dry-structs and dry-validations
 
 The gem is still work in progress and is not yet fully tested.
+## IMPORTANT:
+
+If you are upgrading from version 1 to version 2, you will need to replace: 
+    
+    Dry::Swagger::StructParser.new.call(struct)
+with 
+
+    Dry::Swagger::DocumentationGenerator.new.from_struct(struct) 
+and replace 
+    
+    Dry::Swagger::ContractParser.new.call(contract)
+with 
+    
+    Dry::Swagger::DocumentationGenerator.new.from_validation(contract).
+
+For the configuration file in project/config/initializers/dry-swagger.rb, you will need to replace:
+
+    Dry::Swagger::Config::ContractConfiguration -> Dry::Swagger::Config::SwaggerConfiguration
+you do not need both ContractConfiguration and StructConfiguration.
 ## Installation
 
 Add this line to your application's Gemfile:
