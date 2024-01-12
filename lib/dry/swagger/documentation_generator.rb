@@ -12,15 +12,15 @@ module Dry
       }.freeze
 
       def initialize
-        @config = Config::SwaggerConfiguration
+        @config = ::Dry::Swagger::Config::SwaggerConfiguration
       end
 
       def from_struct(struct)
-        generate_documentation(DryStructParser::StructSchemaParser.new.call(struct).keys)
+        generate_documentation(::DryStructParser::StructSchemaParser.new.call(struct).keys)
       end
 
       def from_validation(validation)
-        generate_documentation(DryValidationParser::ValidationSchemaParser.new.call(validation).keys)
+        generate_documentation(::DryValidationParser::ValidationSchemaParser.new.call(validation).keys)
       end
 
       def generate_documentation(fields)
