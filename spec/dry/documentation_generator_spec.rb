@@ -26,6 +26,14 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
           optional(:integer4).maybe(:int?)
           optional(:integer5).filled(:int?)
 
+          required(:decimal).value(:decimal)
+          required(:decimal1).maybe(:decimal)
+          required(:decimal2).filled(:decimal)
+
+          optional(:decimal3).value(:decimal)
+          optional(:decimal4).maybe(:decimal)
+          optional(:decimal5).filled(:decimal)
+
           required(:boolean).value(:bool?)
           required(:boolean1).maybe(:bool?)
           required(:boolean2).filled(:bool?)
@@ -96,6 +104,12 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
               :integer3=>{:type=>:integer, :"x-nullable"=>false},
               :integer4=>{:type=>:integer, :"x-nullable"=>true},
               :integer5=>{:type=>:integer, :"x-nullable"=>false},
+              :decimal=>{:type=>:string, :"x-nullable"=>false, format: :decimal},
+              :decimal1=>{:type=>:string, :"x-nullable"=>true, format: :decimal},
+              :decimal2=>{:type=>:string, :"x-nullable"=>false, format: :decimal},
+              :decimal3=>{:type=>:string, :"x-nullable"=>false, format: :decimal},
+              :decimal4=>{:type=>:string, :"x-nullable"=>true, format: :decimal},
+              :decimal5=>{:type=>:string, :"x-nullable"=>false, format: :decimal},
               :boolean=>{:type=>:boolean, :"x-nullable"=>false},
               :boolean1=>{:type=>:boolean, :"x-nullable"=>true},
               :boolean2=>{:type=>:boolean, :"x-nullable"=>false},
@@ -169,6 +183,9 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
               :integer,
               :integer1,
               :integer2,
+              :decimal,
+              :decimal1,
+              :decimal2,
               :boolean,
               :boolean1,
               :boolean2,
@@ -213,6 +230,12 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
               :integer3=>{:type=>:integer, :nullable=>false},
               :integer4=>{:type=>:integer, :nullable=>true},
               :integer5=>{:type=>:integer, :nullable=>false},
+              :decimal=>{:type=>:string, :nullable=>false, format: :decimal},
+              :decimal1=>{:type=>:string, :nullable=>true, format: :decimal},
+              :decimal2=>{:type=>:string, :nullable=>false, format: :decimal},
+              :decimal3=>{:type=>:string, :nullable=>false, format: :decimal},
+              :decimal4=>{:type=>:string, :nullable=>true, format: :decimal},
+              :decimal5=>{:type=>:string, :nullable=>false, format: :decimal},
               :boolean=>{:type=>:boolean, :nullable=>false},
               :boolean1=>{:type=>:boolean, :nullable=>true},
               :boolean2=>{:type=>:boolean, :nullable=>false},
@@ -286,6 +309,9 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
               :integer,
               :integer1,
               :integer2,
+              :decimal,
+              :decimal1,
+              :decimal2,
               :boolean,
               :boolean1,
               :boolean2,
@@ -340,6 +366,11 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
         attribute :required_integer_or_nil, Dry::Swagger::Types::Integer.optional
         attribute? :optional_integer, Dry::Swagger::Types::Integer
         attribute? :optional_integer_or_nil, Dry::Swagger::Types::Integer.optional
+
+        attribute :required_decimal, Dry::Swagger::Types::Decimal
+        attribute :required_decimal_or_nil, Dry::Swagger::Types::Decimal.optional
+        attribute? :optional_decimal, Dry::Swagger::Types::Decimal
+        attribute? :optional_decimal_or_nil, Dry::Swagger::Types::Decimal.optional
 
         attribute :required_boolean, Dry::Swagger::Types::Bool
         attribute :required_boolean_or_nil, Dry::Swagger::Types::Bool.optional
@@ -405,6 +436,10 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
             :required_integer_or_nil=>{:type=>:integer, :"x-nullable"=>true},
             :optional_integer=>{:type=>:integer, :"x-nullable"=>false},
             :optional_integer_or_nil=>{:type=>:integer, :"x-nullable"=>true},
+            :required_decimal=>{:type=>:string, :"x-nullable"=>false, format: :decimal},
+            :required_decimal_or_nil=>{:type=>:string, :"x-nullable"=>true, format: :decimal},
+            :optional_decimal=>{:type=>:string, :"x-nullable"=>false, format: :decimal},
+            :optional_decimal_or_nil=>{:type=>:string, :"x-nullable"=>true, format: :decimal},
             :required_boolean=>{:type=>:boolean, :"x-nullable"=>false},
             :required_boolean_or_nil=>{:type=>:boolean, :"x-nullable"=>true},
             :optional_boolean=>{:type=>:boolean, :"x-nullable"=>false},
@@ -539,6 +574,8 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
             :required_string_or_nil_with_enum,
             :required_integer,
             :required_integer_or_nil,
+            :required_decimal,
+            :required_decimal_or_nil,
             :required_boolean,
             :required_boolean_or_nil,
             :required_date,
@@ -588,6 +625,10 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
             :required_integer_or_nil=>{:type=>:integer, :nullable=>true},
             :optional_integer=>{:type=>:integer, :nullable=>false},
             :optional_integer_or_nil=>{:type=>:integer, :nullable=>true},
+            :required_decimal=>{:type=>:string, :nullable=>false, format: :decimal},
+            :required_decimal_or_nil=>{:type=>:string, :nullable=>true, format: :decimal},
+            :optional_decimal=>{:type=>:string, :nullable=>false, format: :decimal},
+            :optional_decimal_or_nil=>{:type=>:string, :nullable=>true, format: :decimal},
             :required_boolean=>{:type=>:boolean, :nullable=>false},
             :required_boolean_or_nil=>{:type=>:boolean, :nullable=>true},
             :optional_boolean=>{:type=>:boolean, :nullable=>false},
@@ -722,6 +763,8 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
             :required_string_or_nil_with_enum,
             :required_integer,
             :required_integer_or_nil,
+            :required_decimal,
+            :required_decimal_or_nil,
             :required_boolean,
             :required_boolean_or_nil,
             :required_date,

@@ -6,6 +6,7 @@ module Dry
           "integer" => { type: :integer },
           "boolean" => { type: :boolean },
           "float" => { type: :float },
+          "decimal" => { type: :string, format: :decimal },
           "datetime" => { type: :string, format: :datetime },
           "date" => { type: :string, format: :date },
           "time" => { type: :string, format: :time },
