@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    dry-swagger (2.0.3)
-      dry_struct_parser
-      dry_validation_parser
+    dry-swagger (2.0.4)
+      dry_struct_parser (~> 0.1.2)
+      dry_validation_parser (~> 0.1.11)
 
 GEM
   remote: https://rubygems.org/
@@ -23,7 +23,7 @@ GEM
       concurrent-ruby (~> 1.0)
       dry-core (~> 1.0, < 2)
       zeitwerk (~> 2.6)
-    dry-schema (1.13.3)
+    dry-schema (1.13.4)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 1.0, >= 1.0.1)
       dry-core (~> 1.0, < 2)
@@ -51,7 +51,7 @@ GEM
       zeitwerk (~> 2.6)
     dry_struct_parser (0.1.2)
       dry-struct (~> 1)
-    dry_validation_parser (0.1.10)
+    dry_validation_parser (0.1.11)
       dry-types (~> 1)
       dry-validation (~> 1)
     i18n (1.14.1)
@@ -78,8 +78,8 @@ PLATFORMS
 
 DEPENDENCIES
   dry-swagger!
-  dry_struct_parser
-  dry_validation_parser
+  dry_struct_parser (~> 0.1.2)
+  dry_validation_parser (~> 0.1.11)
   i18n
   rake (~> 12.0)
   rspec (~> 3.0)

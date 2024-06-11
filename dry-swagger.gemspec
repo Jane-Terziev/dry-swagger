@@ -27,6 +27,6 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "dry_struct_parser"
-  spec.add_dependency "dry_validation_parser"
+  spec.add_dependency "dry_struct_parser", '~> 0.1.2'
+  spec.add_dependency "dry_validation_parser", "~> 0.1.11"
 end

@@ -10,6 +10,7 @@ module Dry
           "datetime" => { type: :string, format: :datetime },
           "date" => { type: :string, format: :date },
           "time" => { type: :string, format: :time },
+          "uuid" => { type: :string, format: :uuid }
       }.freeze
 
       def initialize

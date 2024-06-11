@@ -5,7 +5,6 @@ require "spec_helper"
 RSpec.describe Dry::Swagger::DocumentationGenerator do
   subject { described_class.new }
 
-
   describe "#.generate_documentation(fields)" do
     let(:test_contract) do
       Class.new(Dry::Validation::Contract) do
@@ -83,6 +82,37 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
 
           required(:with_description).value(:str?, min_size?: 5, max_size?: 10)
           required(:string_with_enum).value(Dry::Swagger::Types::String.enum("test", "test1"))
+
+          required(:uuid_1).value(:uuid_v1?)
+          required(:uuid_2).value(:uuid_v2?)
+          required(:uuid_3).value(:uuid_v3?)
+          required(:uuid_4).value(:uuid_v4?)
+
+          required(:uuid_5).maybe(:uuid_v1?)
+          required(:uuid_6).maybe(:uuid_v2?)
+          required(:uuid_7).maybe(:uuid_v3?)
+          required(:uuid_8).maybe(:uuid_v4?)
+
+          required(:uuid_9).filled(:uuid_v1?)
+          required(:uuid_10).filled(:uuid_v2?)
+          required(:uuid_11).filled(:uuid_v3?)
+          required(:uuid_12).filled(:uuid_v4?)
+
+          #
+          optional(:uuid_13).value(:uuid_v1?)
+          optional(:uuid_14).value(:uuid_v2?)
+          optional(:uuid_15).value(:uuid_v3?)
+          optional(:uuid_16).value(:uuid_v4?)
+
+          optional(:uuid_17).maybe(:uuid_v1?)
+          optional(:uuid_18).maybe(:uuid_v2?)
+          optional(:uuid_19).maybe(:uuid_v3?)
+          optional(:uuid_20).maybe(:uuid_v4?)
+
+          optional(:uuid_21).filled(:uuid_v1?)
+          optional(:uuid_22).filled(:uuid_v2?)
+          optional(:uuid_23).filled(:uuid_v3?)
+          optional(:uuid_24).filled(:uuid_v4?)
         end
       end
     end
@@ -175,7 +205,32 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
                  :description=>"Minimum size: 5, Maximum size: 10",
                  :"x-nullable"=>false},
               :string_with_enum=>
-                {:type=>:string, :enum=>["test", "test1"], :"x-nullable"=>false}},
+                {:type=>:string, :enum=>["test", "test1"], :"x-nullable"=>false},
+              :uuid_1=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_2=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_3=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_4=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_5=>{:format=>:uuid, :"x-nullable"=>true, :type=>:string},
+              :uuid_6=>{:format=>:uuid, :"x-nullable"=>true, :type=>:string},
+              :uuid_7=>{:format=>:uuid, :"x-nullable"=>true, :type=>:string},
+              :uuid_8=>{:format=>:uuid, :"x-nullable"=>true, :type=>:string},
+              :uuid_9=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_10=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_11=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_12=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_13=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_14=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_15=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_16=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_17=>{:format=>:uuid, :"x-nullable"=>true, :type=>:string},
+              :uuid_18=>{:format=>:uuid, :"x-nullable"=>true, :type=>:string},
+              :uuid_19=>{:format=>:uuid, :"x-nullable"=>true, :type=>:string},
+              :uuid_20=>{:format=>:uuid, :"x-nullable"=>true, :type=>:string},
+              :uuid_21=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_22=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_23=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string},
+              :uuid_24=>{:format=>:uuid, :"x-nullable"=>false, :type=>:string}
+             },
            :required=>
              [:string,
               :string1,
@@ -199,7 +254,20 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
               :array,
               :array2,
               :with_description,
-              :string_with_enum]
+              :string_with_enum,
+              :uuid_1,
+              :uuid_2,
+              :uuid_3,
+              :uuid_4,
+              :uuid_5,
+              :uuid_6,
+              :uuid_7,
+              :uuid_8,
+              :uuid_9,
+              :uuid_10,
+              :uuid_11,
+              :uuid_12
+             ]
           }
         end
 
@@ -301,7 +369,32 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
                  :description=>"Minimum size: 5, Maximum size: 10",
                  :nullable=>false},
               :string_with_enum=>
-                {:type=>:string, :enum=>["test", "test1"], :nullable=>false}},
+                {:type=>:string, :enum=>["test", "test1"], :nullable=>false},
+              :uuid_1=>{:format=>:uuid,  :nullable=>false, :type=>:string},
+              :uuid_2=>{:format=>:uuid,  :nullable=>false, :type=>:string},
+              :uuid_3=>{:format=>:uuid,  :nullable=>false, :type=>:string},
+              :uuid_4=>{:format=>:uuid,  :nullable=>false, :type=>:string},
+              :uuid_5=>{:format=>:uuid,  :nullable=>true, :type=>:string},
+              :uuid_6=>{:format=>:uuid,  :nullable=>true, :type=>:string},
+              :uuid_7=>{:format=>:uuid,  :nullable=>true, :type=>:string},
+              :uuid_8=>{:format=>:uuid,  :nullable=>true, :type=>:string},
+              :uuid_9=>{:format=>:uuid,  :nullable=>false, :type=>:string},
+              :uuid_10=>{:format=>:uuid, :nullable=>false, :type=>:string},
+              :uuid_11=>{:format=>:uuid, :nullable=>false, :type=>:string},
+              :uuid_12=>{:format=>:uuid, :nullable=>false, :type=>:string},
+              :uuid_13=>{:format=>:uuid, :nullable=>false, :type=>:string},
+              :uuid_14=>{:format=>:uuid, :nullable=>false, :type=>:string},
+              :uuid_15=>{:format=>:uuid, :nullable=>false, :type=>:string},
+              :uuid_16=>{:format=>:uuid, :nullable=>false, :type=>:string},
+              :uuid_17=>{:format=>:uuid, :nullable=>true, :type=>:string},
+              :uuid_18=>{:format=>:uuid, :nullable=>true, :type=>:string},
+              :uuid_19=>{:format=>:uuid, :nullable=>true, :type=>:string},
+              :uuid_20=>{:format=>:uuid, :nullable=>true, :type=>:string},
+              :uuid_21=>{:format=>:uuid, :nullable=>false, :type=>:string},
+              :uuid_22=>{:format=>:uuid, :nullable=>false, :type=>:string},
+              :uuid_23=>{:format=>:uuid, :nullable=>false, :type=>:string},
+              :uuid_24=>{:format=>:uuid, :nullable=>false, :type=>:string}
+             },
            :required=>
              [:string,
               :string1,
@@ -325,7 +418,20 @@ RSpec.describe Dry::Swagger::DocumentationGenerator do
               :array,
               :array2,
               :with_description,
-              :string_with_enum]
+              :string_with_enum,
+              :uuid_1,
+              :uuid_2,
+              :uuid_3,
+              :uuid_4,
+              :uuid_5,
+              :uuid_6,
+              :uuid_7,
+              :uuid_8,
+              :uuid_9,
+              :uuid_10,
+              :uuid_11,
+              :uuid_12
+             ]
           }
         end
 

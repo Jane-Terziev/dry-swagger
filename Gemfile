@@ -5,6 +5,6 @@ gemspec
 
 gem "rake", "~> 12.0"
 gem "rspec", "~> 3.0"
-gem "dry_struct_parser"
-gem "dry_validation_parser"
+gem 'dry_struct_parser', '~> 0.1.2'
+gem "dry_validation_parser", "~> 0.1.11"
 gem 'i18n'
