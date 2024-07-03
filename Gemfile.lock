@@ -1,23 +1,23 @@
 PATH
   remote: .
   specs:
-    dry-swagger (2.0.4)
+    dry-swagger (2.0.5)
       dry_struct_parser (~> 0.1.2)
       dry_validation_parser (~> 0.1.11)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    bigdecimal (3.1.6)
-    concurrent-ruby (1.2.3)
+    bigdecimal (3.1.8)
+    concurrent-ruby (1.3.3)
     diff-lcs (1.5.1)
-    dry-configurable (1.1.0)
+    dry-configurable (1.2.0)
       dry-core (~> 1.0, < 2)
       zeitwerk (~> 2.6)
     dry-core (1.0.1)
       concurrent-ruby (~> 1.0)
       zeitwerk (~> 2.6)
-    dry-inflector (1.0.0)
+    dry-inflector (1.1.0)
     dry-initializer (3.1.1)
     dry-logic (1.5.0)
       concurrent-ruby (~> 1.0)
@@ -51,7 +51,7 @@ GEM
       zeitwerk (~> 2.6)
     dry_struct_parser (0.1.2)
       dry-struct (~> 1)
-    dry_validation_parser (0.1.11)
+    dry_validation_parser (0.1.12)
       dry-types (~> 1)
       dry-validation (~> 1)
     i18n (1.14.1)
@@ -71,7 +71,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.1)
-    zeitwerk (2.6.13)
+    zeitwerk (2.6.16)
 
 PLATFORMS
   ruby
