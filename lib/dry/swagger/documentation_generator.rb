@@ -41,7 +41,9 @@ module Dry
           raise StandardError.new e.message % { field_name: field_name, valid_types: SWAGGER_FIELD_TYPE_DEFINITIONS.keys, definition: definition }
         end
 
-        { :type => :object, :properties => documentation[:properties], :required => documentation[:required] }
+        result = { :type => :object, :properties => documentation[:properties] }
+        result[:required] = documentation[:required] if documentation[:required].any?
+        result
       end
 
       def generate_field_properties(definition)
